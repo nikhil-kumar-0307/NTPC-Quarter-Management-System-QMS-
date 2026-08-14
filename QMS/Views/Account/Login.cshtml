@@ -1,0 +1,323 @@
+﻿@model QMS.Models.DTOs.LoginDto
+
+@{
+    ViewBag.Title = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - QMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #eef1f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            width: 900px;
+            max-width: 100%;
+            min-height: 530px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Left brand panel */
+        .brand-panel {
+            width: 45%;
+            background: #0f172a;
+            color: white;
+            padding: 45px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .brand-mark {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+            .brand-mark .logo-box {
+                width: 42px;
+                height: 42px;
+                background: white;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: 'IBM Plex Mono', monospace;
+                font-weight: 700;
+                color: #0f172a;
+                font-size: 13px;
+            }
+
+            .brand-mark .brand-text .name {
+                font-size: 15px;
+                font-weight: bold;
+                letter-spacing: 0.5px;
+            }
+
+            .brand-mark .brand-text .sub {
+                font-size: 11px;
+                color: #7dd3c0;
+                letter-spacing: 1px;
+            }
+
+        .brand-copy h1 {
+            font-size: 30px;
+            font-weight: bold;
+            line-height: 1.25;
+            margin-bottom: 16px;
+        }
+
+        .brand-copy p {
+            font-size: 14px;
+            color: #cbd5e1;
+            line-height: 1.6;
+            max-width: 300px;
+        }
+
+        .brand-graphic {
+            margin-top: 30px;
+            height: 60px;
+        }
+
+        .brand-footer {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* Right form panel */
+        .form-panel {
+            width: 55%;
+            padding: 55px 55px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+            .form-panel h2 {
+                font-size: 24px;
+                color: #0f172a;
+                margin-bottom: 6px;
+            }
+
+            .form-panel > p.intro {
+                font-size: 13px;
+                color: #777;
+                margin-bottom: 30px;
+            }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 6px;
+                font-weight: bold;
+                font-size: 13px;
+                color: #444;
+            }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #d8dee8;
+            background: #f4f6fb;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        #EmployeeNumber {
+            font-family: 'IBM Plex Mono', monospace;
+            letter-spacing: 1px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #0f172a;
+            background: white;
+        }
+
+        .validation-error {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .validation-summary {
+            color: #842029;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin-bottom: 18px;
+            font-size: 13px;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .forgot-link {
+            font-size: 13px;
+            color: #0f172a;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+            .forgot-link:hover {
+                text-decoration: underline;
+            }
+
+        .login-btn {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 6px;
+            background: #0f172a;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background .15s;
+        }
+
+            .login-btn:hover {
+                background: #1e293b;
+            }
+
+        .help-text {
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            margin-top: 20px;
+        }
+
+        @@media (max-width: 800px) {
+            .brand-panel {
+                display: none;
+            }
+
+            .form-panel {
+                width: 100%;
+                padding: 45px 35px;
+            }
+
+            .login-card {
+                min-height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+
+        
+        <!-- Brand panel -->
+        <div class="brand-panel">
+
+            <div class="brand-mark">
+                <div class="logo-box">QMS</div>
+                <div class="brand-text">
+                    <div class="name">QMS</div>
+                    <div class="sub">EMPLOYEE PORTAL</div>
+                </div>
+            </div>
+
+            <div class="brand-copy">
+                <h1>Quarters, allotted<br />and managed with ease.</h1>
+                <p>A single place to request, allot, and track residential quarters for NTPC employees.</p>
+
+                <svg class="brand-graphic" viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="20" y="15" width="80" height="75" rx="2" stroke="#7dd3c0" stroke-width="2.5" />
+                    <line x1="20" y1="35" x2="100" y2="35" stroke="#7dd3c0" stroke-width="2" />
+                    <line x1="20" y1="55" x2="100" y2="55" stroke="#7dd3c0" stroke-width="2" />
+                    <line x1="20" y1="75" x2="100" y2="75" stroke="#7dd3c0" stroke-width="2" />
+                    <line x1="45" y1="15" x2="45" y2="90" stroke="#7dd3c0" stroke-width="2" />
+                    <line x1="75" y1="15" x2="75" y2="90" stroke="#7dd3c0" stroke-width="2" />
+                </svg>
+            </div>
+
+            <div class="brand-footer">
+                Employee access only
+            </div>
+
+        </div>
+
+        <!-- Form panel -->
+        <div class="form-panel">
+
+            <h2>Sign in</h2>
+            <p class="intro">Use your registered employee number to continue.</p>
+
+            @using (Html.BeginForm("Login", "Account", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "validation-summary" })
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.EmployeeNumber)
+                    @Html.TextBoxFor(m => m.EmployeeNumber, new { @class = "form-control", placeholder = "e.g. Admin001" })
+                    @Html.ValidationMessageFor(m => m.EmployeeNumber, "", new { @class = "validation-error" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Password)
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Enter Password" })
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "validation-error" })
+                </div>
+
+                <div class="form-row">
+                    <div class="remember-me">
+                        @Html.CheckBoxFor(m => m.RememberMe)
+                        @Html.LabelFor(m => m.RememberMe)
+                    </div>
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="login-btn">Login</button>
+            }
+
+            <div class="help-text">Trouble signing in? Contact your IT administrator.</div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

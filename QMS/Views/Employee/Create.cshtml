@@ -1,0 +1,200 @@
+﻿@model QMS.Models.DTOs.EmployeeDto
+
+@{
+    ViewBag.Title = "Add Employee";
+    ViewBag.ActiveMenu = "Employees";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="welcome">
+    <h2>Add Employee</h2>
+    <p>Enter employee and quarter allotment details.</p>
+</div>
+
+<div class="form-card">
+
+    @using (Html.BeginForm("Create", "Employee", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "validation-summary" })
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Name)
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "Full name" })
+                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.EmployeeNo)
+                @Html.TextBoxFor(m => m.EmployeeNo, new { @class = "form-control id-field", placeholder = "e.g. EMP1024" })
+                @Html.ValidationMessageFor(m => m.EmployeeNo, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.QuarterNo)
+                @Html.TextBoxFor(m => m.QuarterNo, new { @class = "form-control id-field", placeholder = "e.g. Q-204" })
+                @Html.ValidationMessageFor(m => m.QuarterNo, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.QuarterType)
+                @Html.DropDownListFor(m => m.QuarterType, (SelectList)ViewBag.QuarterTypes, "Select type", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.QuarterType, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Status)
+                @Html.DropDownListFor(m => m.Status, (SelectList)ViewBag.StatusOptions, "Select status", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Status, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.ResidenceTelNo)
+                @Html.TextBoxFor(m => m.ResidenceTelNo, new { @class = "form-control", placeholder = "Residence telephone no." })
+                @Html.ValidationMessageFor(m => m.ResidenceTelNo, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group full-width">
+                @Html.LabelFor(m => m.ProfilePic)
+                @Html.TextBoxFor(m => m.ProfilePic, new { type = "file", @class = "form-control file-input", accept = "image/*" })
+                @Html.ValidationMessageFor(m => m.ProfilePic, "", new { @class = "validation-error" })
+            </div>
+
+        </div>
+
+        <div class="form-actions">
+            <a href="@Url.Action("Index", "Employee")" class="btn-secondary">Cancel</a>
+            <button type="submit" class="btn-primary">Save Employee</button>
+        </div>
+    }
+
+</div>
+
+@section Styles {
+    <style>
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+            .welcome h2 {
+                margin-bottom: 8px;
+            }
+
+            .welcome p {
+                color: #777;
+            }
+
+        .form-card {
+            background: white;
+            padding: 30px 35px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            max-width: 800px;
+        }
+
+        .validation-summary {
+            color: #842029;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            font-size: 13px;
+            color: #444;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #d8dee8;
+            background: #f4f6fb;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+            .form-control:focus {
+                outline: none;
+                border-color: #0f172a;
+                background: white;
+            }
+
+        .id-field {
+            font-family: 'IBM Plex Mono', monospace;
+            letter-spacing: 0.5px;
+        }
+
+        .file-input {
+            padding: 8px;
+            background: white;
+        }
+
+        .validation-error {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .btn-primary {
+            padding: 11px 24px;
+            border: none;
+            border-radius: 6px;
+            background: #0f172a;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+            .btn-primary:hover {
+                background: #1e293b;
+            }
+
+        .btn-secondary {
+            padding: 11px 24px;
+            border-radius: 6px;
+            border: 1px solid #d8dee8;
+            color: #444;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+            .btn-secondary:hover {
+                background: #f4f6fb;
+            }
+
+        @@media (max-width: 700px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+}

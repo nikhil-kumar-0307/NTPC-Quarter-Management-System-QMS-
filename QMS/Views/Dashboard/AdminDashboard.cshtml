@@ -1,0 +1,146 @@
+﻿@{
+    ViewBag.Title = "Admin Dashboard";
+    ViewBag.ActiveMenu = "Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    // TODO: replace with real data
+    int totalEmployees = 0;
+    int totalUsers = 0;
+    int pendingRequests = 0;
+    int completedRequests = 0;
+}
+
+<div class="welcome">
+    <h2>Dashboard Overview</h2>
+    <p>Here is a quick overview of your QMS system.</p>
+</div>
+
+<div class="cards">
+    <div class="card"><h3>Total Employees</h3><div class="number">@totalEmployees</div></div>
+    <div class="card"><h3>Total Users</h3><div class="number">@totalUsers</div></div>
+    <div class="card"><h3>Pending Requests</h3><div class="number">@pendingRequests</div></div>
+    <div class="card"><h3>Completed Requests</h3><div class="number">@completedRequests</div></div>
+</div>
+
+<div class="sections">
+    <div class="panel">
+        <h3>Recent Activity</h3>
+        @* TODO: replace with real activity feed *@
+        <div class="activity">No recent activity</div>
+    </div>
+
+    <div class="panel">
+        <h3>Quick Actions</h3>
+        <div class="quick-actions">
+            <a href="@Url.Action("Create", "Employee")" class="action-btn">Add Employee</a>
+            <a href="#" class="action-btn">Manage Users</a>
+            <a href="#" class="action-btn">View Reports</a>
+
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+            .welcome h2 {
+                margin-bottom: 8px;
+            }
+
+            .welcome p {
+                color: #777;
+            }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+            .card h3 {
+                font-size: 15px;
+                color: #777;
+                margin-bottom: 12px;
+            }
+
+            .card .number {
+                font-size: 30px;
+                font-weight: bold;
+            }
+
+        .sections {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+            .panel h3 {
+                margin-bottom: 20px;
+            }
+
+        .activity {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            color: #777;
+        }
+
+            .activity:last-child {
+                border-bottom: none;
+            }
+
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background: #0f172a;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+        }
+
+            .action-btn:hover {
+                background: #1e293b;
+            }
+
+        @@media (max-width: 900px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .sections {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @@media (max-width: 600px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+}
