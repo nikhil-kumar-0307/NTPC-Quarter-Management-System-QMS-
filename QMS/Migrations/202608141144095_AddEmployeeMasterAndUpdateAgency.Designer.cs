@@ -7,13 +7,13 @@ namespace QMS.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.5.2")]
-    public sealed partial class AddEmployee : IMigrationMetadata
+    public sealed partial class AddEmployeeMasterAndUpdateAgency : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(AddEmployee));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(AddEmployeeMasterAndUpdateAgency));
         
         string IMigrationMetadata.Id
         {
-            get { return "202608131028139_AddEmployee"; }
+            get { return "202608141144095_AddEmployeeMasterAndUpdateAgency"; }
         }
         
         string IMigrationMetadata.Source

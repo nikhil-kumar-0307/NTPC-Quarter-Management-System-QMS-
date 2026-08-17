@@ -1,17 +1,17 @@
-﻿@model IEnumerable<QMS.Data.Models.Employee>
+﻿@model IEnumerable<QMS.Data.Models.EmployeeMaster>
 
 @{
-    ViewBag.Title = "Employees";
-    ViewBag.ActiveMenu = "Employees";
+    ViewBag.Title = "Employee Master";
+    ViewBag.ActiveMenu = "EmployeeMaster";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <div class="welcome list-header">
     <div>
-        <h2>Employees</h2>
-        <p>Employees and their quarter allotment status.</p>
+        <h2>Employee Master</h2>
+        <p>Employee records and their quarter allotment status.</p>
     </div>
-    <a href="@Url.Action("Create", "Employee")" class="btn-primary">+ Add Employee</a>
+    <a href="@Url.Action("Create", "EmployeeMaster")" class="btn-primary">+ Add Employee</a>
 </div>
 
 <div class="table-card">
@@ -21,17 +21,22 @@
                 <th></th>
                 <th>Name</th>
                 <th>Employee No</th>
+                <th>Department</th>
+                <th>Designation</th>
+                <th>Mobile No</th>
                 <th>Quarter No</th>
                 <th>Quarter Type</th>
                 <th>Status</th>
-                <th>Residence Tel No</th>
+                <th>DOB</th>
+                <th>Retirement Date</th>
+                <th>Blood Group</th>
             </tr>
         </thead>
         <tbody>
             @if (!Model.Any())
             {
                 <tr>
-                    <td colspan="7" class="empty-row">No employees added yet.</td>
+                    <td colspan="11" class="empty-row">No employees added yet.</td>
                 </tr>
             }
             else
@@ -40,21 +45,26 @@
                 {
                     <tr>
                         <td>
-                            @if (!string.IsNullOrEmpty(emp.ProfilePicPath))
+                            @if (!string.IsNullOrEmpty(emp.PhotoPath))
                             {
-                                <img src="@Url.Content(emp.ProfilePicPath)" class="avatar" alt="@emp.Name" />
+                                <img src="@Url.Content(emp.PhotoPath)" class="avatar" alt="@emp.EmployeeName" />
                             }
                             else
                             {
-                                <div class="avatar avatar-placeholder">@emp.Name.Substring(0, 1)</div>
+                                <div class="avatar avatar-placeholder">@emp.EmployeeName.Substring(0, 1)</div>
                             }
                         </td>
-                        <td>@emp.Name</td>
+                        <td>@emp.EmployeeName</td>
                         <td class="id-field">@emp.EmployeeNo</td>
+                        <td>@emp.Department</td>
+                        <td>@emp.Designation</td>
+                        <td>@emp.MobileNo</td>
                         <td class="id-field">@emp.QuarterNo</td>
                         <td>@emp.QuarterType</td>
                         <td><span class="badge badge-@emp.Status.ToLower()">@emp.Status</span></td>
-                        <td>@emp.ResidenceTelNo</td>
+                        <td>@emp.DateOfBirth.ToString("dd-MMM-yyyy")</td>
+                        <td>@emp.DateOfRetirement.ToString("dd-MMM-yyyy")</td>
+                        <td>@emp.BloodGroup</td>
                     </tr>
                 }
             }
@@ -98,12 +108,13 @@
             background: white;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            overflow: hidden;
+            overflow: auto;
         }
 
         .emp-table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 1100px;
         }
 
             .emp-table th {
@@ -114,12 +125,14 @@
                 color: #777;
                 background: #f4f6fb;
                 padding: 14px 18px;
+                white-space: nowrap;
             }
 
             .emp-table td {
                 padding: 14px 18px;
                 border-top: 1px solid #eee;
                 font-size: 14px;
+                white-space: nowrap;
             }
 
         .id-field {

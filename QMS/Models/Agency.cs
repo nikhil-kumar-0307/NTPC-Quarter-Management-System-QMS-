@@ -3,29 +3,30 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QMS.Data.Models
 {
-    public class Employee
+    public class Agency
     {
         public int Id { get; set; }
 
         [Required, StringLength(100)]
-        public string Name { get; set; }
+        public string AgencyName { get; set; }
+
+        [StringLength(15)]
+        public string Contact { get; set; }
 
         [Required, StringLength(20)]
-        public string EmployeeNo { get; set; }
-
-        [Required, StringLength(20)]
-        public string QuarterNo { get; set; }
+        public string PoNumber { get; set; }
 
         [Required, StringLength(5)]
         public string QuarterType { get; set; }   // A, B, C
 
         [Required, StringLength(20)]
-        public string Status { get; set; }        // Active, Empty, Retained, Agency
-
-        public string ProfilePicPath { get; set; }
+        public string QuarterNo { get; set; }
 
         [StringLength(15)]
-        public string ResidenceTelNo { get; set; }
+        public string MobileNo { get; set; }
+
+        [StringLength(100)]
+        public string EmailId { get; set; }
 
         public DateTime CreatedAt { get; set; }
     }

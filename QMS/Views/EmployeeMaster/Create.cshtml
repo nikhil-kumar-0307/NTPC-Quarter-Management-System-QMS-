@@ -1,0 +1,250 @@
+﻿@model QMS.Models.DTOs.EmployeeMasterDto
+
+@{
+    ViewBag.Title = "Add Employee";
+    ViewBag.ActiveMenu = "EmployeeMaster";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="welcome">
+    <h2>Add Employee</h2>
+    <p>Enter employee, contact, and quarter allotment details.</p>
+</div>
+
+<div class="form-card">
+
+    @using (Html.BeginForm("Create", "EmployeeMaster", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "validation-summary" })
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.EmployeeName)
+                @Html.TextBoxFor(m => m.EmployeeName, new { @class = "form-control", placeholder = "Full name" })
+                @Html.ValidationMessageFor(m => m.EmployeeName, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.EmployeeNo)
+                @Html.TextBoxFor(m => m.EmployeeNo, new { @class = "form-control id-field", placeholder = "e.g. EMP1024" })
+                @Html.ValidationMessageFor(m => m.EmployeeNo, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Department)
+                @Html.TextBoxFor(m => m.Department, new { @class = "form-control", placeholder = "e.g. Operations" })
+                @Html.ValidationMessageFor(m => m.Department, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Designation)
+                @Html.TextBoxFor(m => m.Designation, new { @class = "form-control", placeholder = "e.g. Junior Engineer" })
+                @Html.ValidationMessageFor(m => m.Designation, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.EmailId)
+                @Html.TextBoxFor(m => m.EmailId, new { @class = "form-control", placeholder = "name@ntpc.co.in" })
+                @Html.ValidationMessageFor(m => m.EmailId, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.MobileNo)
+                @Html.TextBoxFor(m => m.MobileNo, new { @class = "form-control", placeholder = "Mobile number" })
+                @Html.ValidationMessageFor(m => m.MobileNo, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.IntercomResidence)
+                @Html.TextBoxFor(m => m.IntercomResidence, new { @class = "form-control", placeholder = "Residence intercom no." })
+                @Html.ValidationMessageFor(m => m.IntercomResidence, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.IntercomOffice)
+                @Html.TextBoxFor(m => m.IntercomOffice, new { @class = "form-control", placeholder = "Office intercom no." })
+                @Html.ValidationMessageFor(m => m.IntercomOffice, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.DateOfBirth)
+                @Html.TextBoxFor(m => m.DateOfBirth, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                @Html.ValidationMessageFor(m => m.DateOfBirth, "", new { @class = "validation-error" })
+                <small class="hint">Retirement date is auto-calculated (DOB + 60 years).</small>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.BloodGroup)
+                @Html.DropDownListFor(m => m.BloodGroup, (SelectList)ViewBag.BloodGroups, "Select blood group", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.BloodGroup, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.QuarterNo)
+                @Html.TextBoxFor(m => m.QuarterNo, new { @class = "form-control id-field", placeholder = "e.g. Q-204" })
+                @Html.ValidationMessageFor(m => m.QuarterNo, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.QuarterType)
+                @Html.DropDownListFor(m => m.QuarterType, (SelectList)ViewBag.QuarterTypes, "Select type", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.QuarterType, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Status)
+                @Html.DropDownListFor(m => m.Status, (SelectList)ViewBag.StatusOptions, "Select status", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Status, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group full-width">
+                @Html.LabelFor(m => m.Photo)
+                @Html.TextBoxFor(m => m.Photo, new { type = "file", @class = "form-control file-input", accept = "image/*" })
+                @Html.ValidationMessageFor(m => m.Photo, "", new { @class = "validation-error" })
+            </div>
+
+        </div>
+
+        <div class="form-actions">
+            <a href="@Url.Action("Index", "EmployeeMaster")" class="btn-secondary">Cancel</a>
+            <button type="submit" class="btn-primary">Save Employee</button>
+        </div>
+    }
+
+</div>
+
+@section Styles {
+    <style>
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+            .welcome h2 {
+                margin-bottom: 8px;
+            }
+
+            .welcome p {
+                color: #777;
+            }
+
+        .form-card {
+            background: white;
+            padding: 30px 35px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            max-width: 900px;
+        }
+
+        .validation-summary {
+            color: #842029;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            font-size: 13px;
+            color: #444;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #d8dee8;
+            background: #f4f6fb;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+            .form-control:focus {
+                outline: none;
+                border-color: #0f172a;
+                background: white;
+            }
+
+        .id-field {
+            font-family: 'IBM Plex Mono', monospace;
+            letter-spacing: 0.5px;
+        }
+
+        .file-input {
+            padding: 8px;
+            background: white;
+        }
+
+        .hint {
+            display: block;
+            margin-top: 4px;
+            font-size: 11px;
+            color: #999;
+        }
+
+        .validation-error {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .btn-primary {
+            padding: 11px 24px;
+            border: none;
+            border-radius: 6px;
+            background: #0f172a;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+            .btn-primary:hover {
+                background: #1e293b;
+            }
+
+        .btn-secondary {
+            padding: 11px 24px;
+            border-radius: 6px;
+            border: 1px solid #d8dee8;
+            color: #444;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+            .btn-secondary:hover {
+                background: #f4f6fb;
+            }
+
+        @@media (max-width: 700px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+}

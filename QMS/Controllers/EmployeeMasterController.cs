@@ -8,32 +8,32 @@ using System.Web.Mvc;
 
 namespace QMS.Controllers
 {
-    public class EmployeeController : Controller
+    public class EmployeeMasterController : Controller
     {
         private readonly QMSDbContext _db = new QMSDbContext();
-
         private static readonly string[] QuarterTypes = { "A", "B", "C" };
         private static readonly string[] StatusOptions = { "Active", "Empty", "Retained", "Agency" };
+        private static readonly string[] BloodGroups = { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
 
-        // GET: Employee
+        // GET: EmployeeMaster
         public ActionResult Index()
         {
-            var employees = _db.Employees.OrderBy(e => e.Name).ToList();
+            var employees = _db.EmployeeMasters.OrderBy(e => e.EmployeeName).ToList();
             return View(employees);
         }
 
-        // GET: Employee/Create
+        // GET: EmployeeMaster/Create
         [HttpGet]
         public ActionResult Create()
         {
             PopulateDropdowns();
-            return View(new EmployeeDto());
+            return View(new EmployeeMasterDto());
         }
 
-        // POST: Employee/Create
+        // POST: EmployeeMaster/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(EmployeeDto model)
+        public ActionResult Create(EmployeeMasterDto model)
         {
             if (!ModelState.IsValid)
             {
@@ -41,31 +41,37 @@ namespace QMS.Controllers
                 return View(model);
             }
 
-            var employee = new Employee
+            var employee = new EmployeeMaster
             {
-                Name = model.Name,
+                EmployeeName = model.EmployeeName,
                 EmployeeNo = model.EmployeeNo,
+                Department = model.Department,
+                Designation = model.Designation,
+                EmailId = model.EmailId,
+                MobileNo = model.MobileNo,
+                IntercomResidence = model.IntercomResidence,
+                IntercomOffice = model.IntercomOffice,
+                DateOfBirth = model.DateOfBirth,
+                DateOfRetirement = model.DateOfBirth.AddYears(60),
+                BloodGroup = model.BloodGroup,
                 QuarterNo = model.QuarterNo,
                 QuarterType = model.QuarterType,
                 Status = model.Status,
-                ResidenceTelNo = model.ResidenceTelNo,
                 CreatedAt = DateTime.Now
             };
 
-            if (model.ProfilePic != null && model.ProfilePic.ContentLength > 0)
+            if (model.Photo != null && model.Photo.ContentLength > 0)
             {
-                var folder = Server.MapPath("~/Content/uploads/employees");
+                var folder = Server.MapPath("~/Content/uploads/employeemaster");
                 if (!Directory.Exists(folder))
                     Directory.CreateDirectory(folder);
-
-                var fileName = Guid.NewGuid() + Path.GetExtension(model.ProfilePic.FileName);
-                model.ProfilePic.SaveAs(Path.Combine(folder, fileName));
-                employee.ProfilePicPath = "/Content/uploads/employees/" + fileName;
+                var fileName = Guid.NewGuid() + Path.GetExtension(model.Photo.FileName);
+                model.Photo.SaveAs(Path.Combine(folder, fileName));
+                employee.PhotoPath = "/Content/uploads/employeemaster/" + fileName;
             }
 
-            _db.Employees.Add(employee);
+            _db.EmployeeMasters.Add(employee);
             _db.SaveChanges();
-
             TempData["Success"] = "Employee added successfully.";
             return RedirectToAction("Index");
         }
@@ -74,6 +80,7 @@ namespace QMS.Controllers
         {
             ViewBag.QuarterTypes = new SelectList(QuarterTypes);
             ViewBag.StatusOptions = new SelectList(StatusOptions);
+            ViewBag.BloodGroups = new SelectList(BloodGroups);
         }
 
         protected override void Dispose(bool disposing)

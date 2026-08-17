@@ -3,12 +3,12 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class AddEmployee : DbMigration
+    public partial class AddAgency : DbMigration
     {
         public override void Up()
         {
             CreateTable(
-                "dbo.Employees",
+                "dbo.Agencies",
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
@@ -27,7 +27,7 @@
         
         public override void Down()
         {
-            DropTable("dbo.Employees");
+            DropTable("dbo.Agencies");
         }
     }
 }

@@ -1,0 +1,126 @@
+﻿@model IEnumerable<QMS.Data.Models.Agency>
+
+@{
+    ViewBag.Title = "Agencies";
+    ViewBag.ActiveMenu = "Agencies";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="welcome list-header">
+    <div>
+        <h2>Agencies</h2>
+        <p>Agency records and their quarter allotment status.</p>
+    </div>
+    <a href="@Url.Action("Create", "Agency")" class="btn-primary">+ Add Agency</a>
+</div>
+
+<div class="table-card">
+    <table class="emp-table">
+        <thead>
+            <tr>
+                <th>Agency Name</th>
+                <th>Contact</th>
+                <th>PO Number</th>
+                <th>Quarter No</th>
+                <th>Quarter Type</th>
+                <th>Mobile No</th>
+                <th>Email Id</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="7" class="empty-row">No agencies added yet.</td>
+                </tr>
+            }
+            else
+            {
+                foreach (var agency in Model)
+                {
+                    <tr>
+                        <td>@agency.AgencyName</td>
+                        <td>@agency.Contact</td>
+                        <td class="id-field">@agency.PoNumber</td>
+                        <td class="id-field">@agency.QuarterNo</td>
+                        <td>@agency.QuarterType</td>
+                        <td>@agency.MobileNo</td>
+                        <td>@agency.EmailId</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Styles {
+    <style>
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+            .list-header h2 {
+                margin-bottom: 6px;
+            }
+
+            .list-header p {
+                color: #777;
+            }
+
+        .btn-primary {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background: #0f172a;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+            .btn-primary:hover {
+                background: #1e293b;
+            }
+
+        .table-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .emp-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .emp-table th {
+                text-align: left;
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                color: #777;
+                background: #f4f6fb;
+                padding: 14px 18px;
+            }
+
+            .emp-table td {
+                padding: 14px 18px;
+                border-top: 1px solid #eee;
+                font-size: 14px;
+            }
+
+        .id-field {
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .empty-row {
+            text-align: center;
+            color: #999;
+            padding: 30px !important;
+        }
+    </style>
+}
