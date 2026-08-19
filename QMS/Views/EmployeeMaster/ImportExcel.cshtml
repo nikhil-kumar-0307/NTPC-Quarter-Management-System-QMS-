@@ -1,0 +1,408 @@
+﻿@{
+    ViewBag.Title = "Import Employees";
+    ViewBag.ActiveMenu = "EmployeeMasterImport";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-header">
+    <a href="@Url.Action("Index", "EmployeeMaster")" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back to Employee List
+    </a>
+    <h2>Import Employees from Excel</h2>
+    <p>Upload an .xlsx file with employee data. Records matched by <strong>Employee No</strong> will be updated; new ones will be added automatically.</p>
+</div>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-error">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        <div>
+            @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div>@err.ErrorMessage</div>
+            }
+        </div>
+    </div>
+}
+
+<div class="import-grid">
+
+    <div class="import-card">
+        @using (Html.BeginForm("ImportExcel", "EmployeeMaster", FormMethod.Post, new { enctype = "multipart/form-data", id = "importForm" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <label for="excelFile" class="dropzone" id="dropzone">
+                <div class="dropzone-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                </div>
+                <div class="dropzone-text">
+                    <strong id="dropzoneLabel">Click to choose a file or drag and drop</strong>
+                    <span>.xlsx or .xls — up to 10MB</span>
+                </div>
+                <input type="file" name="excelFile" id="excelFile" accept=".xlsx,.xls" required />
+            </label>
+
+            <div class="selected-file" id="selectedFile" style="display:none;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                <span id="selectedFileName"></span>
+                <button type="button" id="clearFile" class="clear-file">&times;</button>
+            </div>
+
+            <button type="submit" class="btn-upload" id="uploadBtn">
+                Upload &amp; Import
+            </button>
+        }
+    </div>
+
+    <div class="info-card">
+        <h3>How it works</h3>
+        <ul class="info-list">
+            <li>
+                <span class="info-num">1</span>
+                <div>
+                    <strong>Download the template</strong>
+                    <p>Start from the provided format so columns line up correctly.</p>
+                </div>
+            </li>
+            <li>
+                <span class="info-num">2</span>
+                <div>
+                    <strong>Fill in employee data</strong>
+                    <p>One row per employee. Keep the header row as-is.</p>
+                </div>
+            </li>
+            <li>
+                <span class="info-num">3</span>
+                <div>
+                    <strong>Upload the file</strong>
+                    <p>Existing employees (matched by Employee No) are updated; new ones are added.</p>
+                </div>
+            </li>
+        </ul>
+
+        <a href="@Url.Action("DownloadTemplate")" class="btn-template">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Download Excel Template
+        </a>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var fileInput = document.getElementById('excelFile');
+            var dropzone = document.getElementById('dropzone');
+            var dropzoneLabel = document.getElementById('dropzoneLabel');
+            var selectedFile = document.getElementById('selectedFile');
+            var selectedFileName = document.getElementById('selectedFileName');
+            var clearFile = document.getElementById('clearFile');
+            var uploadBtn = document.getElementById('uploadBtn');
+            var importForm = document.getElementById('importForm');
+
+            function showFile(name) {
+                selectedFileName.textContent = name;
+                selectedFile.style.display = 'flex';
+                dropzoneLabel.textContent = 'File selected';
+                dropzone.classList.add('has-file');
+            }
+
+            function resetFile() {
+                fileInput.value = '';
+                selectedFile.style.display = 'none';
+                dropzoneLabel.textContent = 'Click to choose a file or drag and drop';
+                dropzone.classList.remove('has-file');
+            }
+
+            fileInput.addEventListener('change', function () {
+                if (fileInput.files && fileInput.files.length > 0) {
+                    showFile(fileInput.files[0].name);
+                } else {
+                    resetFile();
+                }
+            });
+
+            clearFile.addEventListener('click', function (e) {
+                e.preventDefault();
+                resetFile();
+            });
+
+            ['dragenter', 'dragover'].forEach(function (evt) {
+                dropzone.addEventListener(evt, function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropzone.classList.add('dragging');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(function (evt) {
+                dropzone.addEventListener(evt, function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropzone.classList.remove('dragging');
+                });
+            });
+
+            dropzone.addEventListener('drop', function (e) {
+                var files = e.dataTransfer.files;
+                if (files && files.length > 0) {
+                    fileInput.files = files;
+                    showFile(files[0].name);
+                }
+            });
+
+            importForm.addEventListener('submit', function () {
+                uploadBtn.disabled = true;
+                uploadBtn.textContent = 'Importing…';
+            });
+        })();
+    </script>
+}
+
+@section Styles {
+    <style>
+        .page-header {
+            margin-bottom: 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #64748b;
+            text-decoration: none;
+            margin-bottom: 14px;
+        }
+
+            .back-link:hover {
+                color: #0f172a;
+            }
+
+        .page-header h2 {
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            color: #777;
+            max-width: 640px;
+        }
+
+        .alert-error {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 14px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .import-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .import-card,
+        .info-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 28px;
+        }
+
+        .dropzone {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 40px 20px;
+            cursor: pointer;
+            text-align: center;
+            transition: border-color .15s, background .15s;
+        }
+
+            .dropzone:hover,
+            .dropzone.dragging {
+                border-color: #0f172a;
+                background: #f8fafc;
+            }
+
+            .dropzone.has-file {
+                border-color: #15803d;
+                background: #f0fdf4;
+            }
+
+            .dropzone input[type="file"] {
+                position: absolute;
+                inset: 0;
+                opacity: 0;
+                cursor: pointer;
+            }
+
+        .dropzone-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+        }
+
+        .dropzone-text strong {
+            display: block;
+            font-size: 15px;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .dropzone-text span {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .selected-file {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 14px;
+            padding: 10px 14px;
+            background: #f4f6fb;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #0f172a;
+        }
+
+            .selected-file svg {
+                flex-shrink: 0;
+                color: #64748b;
+            }
+
+            .selected-file span {
+                flex: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+        .clear-file {
+            border: none;
+            background: none;
+            font-size: 18px;
+            line-height: 1;
+            color: #999;
+            cursor: pointer;
+        }
+
+            .clear-file:hover {
+                color: #991b1b;
+            }
+
+        .btn-upload {
+            width: 100%;
+            margin-top: 20px;
+            padding: 13px;
+            border: none;
+            border-radius: 6px;
+            background: #0f172a;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background .15s;
+        }
+
+            .btn-upload:hover {
+                background: #1e293b;
+            }
+
+            .btn-upload:disabled {
+                background: #94a3b8;
+                cursor: not-allowed;
+            }
+
+        .info-card h3 {
+            margin-bottom: 18px;
+            font-size: 16px;
+        }
+
+        .info-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+            .info-list li {
+                display: flex;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+        .info-num {
+            flex-shrink: 0;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #0f172a;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .info-list strong {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .info-list p {
+            font-size: 13px;
+            color: #777;
+        }
+
+        .btn-template {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: white;
+            color: #0f172a;
+            font-weight: 600;
+            font-size: 13px;
+            text-decoration: none;
+            transition: background .15s, border-color .15s;
+        }
+
+            .btn-template:hover {
+                background: #f4f6fb;
+                border-color: #0f172a;
+            }
+
+        @@media (max-width: 900px) {
+            .import-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+}

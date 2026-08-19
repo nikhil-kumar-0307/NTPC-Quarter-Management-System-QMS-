@@ -13,10 +13,18 @@ namespace QMS
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            // /login -> Account/Login
+            routes.MapRoute(
+                name: "Login",
+                url: "login",
+                defaults: new { controller = "Account", action = "Login" }
+            );
+
+            // Default route 
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Account", action = "Login", id = UrlParameter.Optional }
+                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
         }
     }

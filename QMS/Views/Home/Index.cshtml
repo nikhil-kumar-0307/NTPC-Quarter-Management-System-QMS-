@@ -1,31 +1,513 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+﻿@model QMS.Models.DTOs.DashboardViewModel
+@{
+    ViewBag.Title = "Employee Directory";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+<div class="welcome">
+    <h2>Employee Directory</h2>
+    <p>Search and browse all employees.</p>
 </div>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+<!-- ===================== EMPLOYEE DIRECTORY ===================== -->
+<div class="emp-directory">
+
+    <div class="emp-filter-bar">
+        <div class="filter-field">
+            <label>Dept.</label>
+            <select id="f-dept">
+                <option value="">All</option>
+                @foreach (var d in Model.Departments)
+                {
+                    <option value="@d">@d</option>
+                }
+            </select>
+        </div>
+        <div class="filter-field">
+            <label>Tel No</label>
+            <input type="text" id="f-tel" placeholder="Search tel no" />
+        </div>
+        <div class="filter-field">
+            <label>Desig.</label>
+            <select id="f-desig">
+                <option value="">All</option>
+                @foreach (var d in Model.Designations)
+                {
+                    <option value="@d">@d</option>
+                }
+            </select>
+        </div>
+        <div class="filter-field">
+            <label>EmpNo</label>
+            <input type="text" id="f-empno" placeholder="Search emp no" />
+        </div>
+        <div class="filter-field">
+            <label>Name</label>
+            <input type="text" id="f-name" placeholder="Search name" />
+        </div>
+        <div class="filter-field">
+            <label>Blood Group</label>
+            <select id="f-blood">
+                <option value="">All</option>
+                @foreach (var b in Model.BloodGroups)
+                {
+                    <option value="@b">@b</option>
+                }
+            </select>
+        </div>
+        <div class="filter-field filter-reset">
+            <label>&nbsp;</label>
+            <button type="button" id="f-clear" class="clear-btn" title="Clear filters">Clear</button>
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+
+    <div id="emp-grid" class="emp-grid">
+        @foreach (var e in Model.Employees)
+        {
+            var tel = string.Join(" ", new[] { e.MobileNo, e.IntercomOffice, e.IntercomResidence })
+                        .ToLowerInvariant();
+            var initials = string.Join("", (e.EmployeeName ?? "").Split(' ')
+                            .Where(p => p.Length > 0).Select(p => p[0])).ToUpperInvariant();
+            if (initials.Length > 2) { initials = initials.Substring(0, 2); }
+
+            <div class="emp-card"
+                 data-name="@e.EmployeeName.ToLowerInvariant()"
+                 data-empno="@e.EmployeeNo.ToLowerInvariant()"
+                 data-dept="@e.Department"
+                 data-desig="@e.Designation"
+                 data-blood="@e.BloodGroup"
+                 data-tel="@tel">
+
+                <div class="emp-photo-wrap">
+                    @if (!string.IsNullOrEmpty(e.PhotoPath))
+                    {
+                        <img src="@Url.Content(e.PhotoPath)" alt="@e.EmployeeName" class="emp-photo" />
+                    }
+                    else
+                    {
+                        <div class="emp-photo emp-photo-fallback">@initials</div>
+                    }
+                </div>
+
+                <div class="emp-body">
+                    <div class="emp-header">
+                        <span class="emp-name">@e.EmployeeName</span>
+                        <span class="emp-no">@e.EmployeeNo</span>
+                    </div>
+                    <div class="emp-desig">@e.Designation@(!string.IsNullOrEmpty(e.Department) ? $" ({e.Department})" : "")</div>
+
+                    <div class="emp-line">
+                        <span class="emp-icon">&#128222;</span>
+                        <span>
+                            @e.MobileNo
+                            @if (!string.IsNullOrEmpty(e.IntercomOffice))
+                            {<text>, (O):@e.IntercomOffice</text>}
+                            @if (!string.IsNullOrEmpty(e.IntercomResidence))
+                            {<text>, (R):@e.IntercomResidence</text>}
+                        </span>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(e.EmailId))
+                    {
+                        <div class="emp-line">
+                            <span class="emp-icon">&#9993;</span>
+                            <span>@e.EmailId</span>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(e.QuarterNo))
+                    {
+                        <div class="emp-line">
+                            <span class="emp-icon">&#128205;</span>
+                            <span>@e.QuarterType/@e.QuarterNo</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
     </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+
+    <div id="emp-empty" class="emp-empty" style="display:none;">No employees match your search.</div>
+
+    <div id="emp-pager" class="emp-pager" style="display:none;">
+        <button type="button" id="pager-prev" class="pager-btn pager-nav">&laquo; Prev</button>
+        <div id="pager-numbers" class="pager-numbers"></div>
+        <button type="button" id="pager-next" class="pager-btn pager-nav">Next &raquo;</button>
     </div>
 </div>
+
+@section Styles {
+    <style>
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+            .welcome h2 {
+                margin-bottom: 8px;
+            }
+
+            .welcome p {
+                color: #777;
+            }
+
+        .emp-directory {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .emp-filter-bar {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr) auto;
+            gap: 14px;
+            align-items: end;
+            padding-bottom: 18px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .filter-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+            .filter-field label {
+                font-size: 12px;
+                color: #777;
+                margin-bottom: 6px;
+            }
+
+            .filter-field select, .filter-field input {
+                padding: 8px 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+
+        .clear-btn {
+            padding: 8px 14px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f5f5f5;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+            .clear-btn:hover {
+                background: #e9e9e9;
+            }
+
+        .emp-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px 20px;
+        }
+
+        .emp-card {
+            background: #fafafa;
+            border-radius: 8px;
+            padding: 45px 16px 16px;
+            position: relative;
+            border: 1px solid #eee;
+        }
+
+        .emp-photo-wrap {
+            position: absolute;
+            top: -32px;
+            left: 20px;
+        }
+
+        .emp-photo {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #3aa0ff;
+            background: #fff;
+        }
+
+        .emp-photo-fallback {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0f172a;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .emp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .emp-name {
+            color: #0f172a;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .emp-no {
+            font-size: 13px;
+            color: #777;
+            white-space: nowrap;
+        }
+
+        .emp-desig {
+            font-size: 13px;
+            color: #444;
+            margin: 4px 0 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .emp-line {
+            display: flex;
+            gap: 8px;
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .emp-icon {
+            flex-shrink: 0;
+        }
+
+        .emp-empty {
+            text-align: center;
+            color: #888;
+            padding: 30px 0;
+        }
+
+        .emp-pager {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+            padding-top: 18px;
+            border-top: 1px solid #eee;
+        }
+
+        .pager-btn {
+            min-width: 36px;
+            padding: 7px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #fff;
+            color: #333;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+            .pager-btn:hover:not(:disabled) {
+                background: #f0f0f0;
+            }
+
+            .pager-btn:disabled {
+                opacity: 0.4;
+                cursor: not-allowed;
+            }
+
+            .pager-btn.active {
+                background: #0f172a;
+                border-color: #0f172a;
+                color: #fff;
+                font-weight: 600;
+            }
+
+        .pager-numbers {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .pager-ellipsis {
+            padding: 7px 4px;
+            color: #999;
+        }
+
+        @@media (max-width: 1100px) {
+            .emp-filter-bar {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .emp-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @@media (max-width: 600px) {
+            .emp-filter-bar {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .emp-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        (function () {
+            var PAGE_SIZE = 15;
+
+            var grid = document.getElementById('emp-grid');
+            var cards = Array.prototype.slice.call(grid.getElementsByClassName('emp-card'));
+            var empty = document.getElementById('emp-empty');
+
+            var pager = document.getElementById('emp-pager');
+            var pagerNumbers = document.getElementById('pager-numbers');
+            var pagerPrev = document.getElementById('pager-prev');
+            var pagerNext = document.getElementById('pager-next');
+
+            var fDept = document.getElementById('f-dept');
+            var fTel = document.getElementById('f-tel');
+            var fDesig = document.getElementById('f-desig');
+            var fEmpNo = document.getElementById('f-empno');
+            var fName = document.getElementById('f-name');
+            var fBlood = document.getElementById('f-blood');
+            var fClear = document.getElementById('f-clear');
+
+            var currentPage = 1;
+
+            function getMatchingCards() {
+                var dept = fDept.value;
+                var tel = fTel.value.trim().toLowerCase();
+                var desig = fDesig.value;
+                var empno = fEmpNo.value.trim().toLowerCase();
+                var name = fName.value.trim().toLowerCase();
+                var blood = fBlood.value;
+
+                return cards.filter(function (card) {
+                    return (dept === '' || card.dataset.dept === dept) &&
+                        (desig === '' || card.dataset.desig === desig) &&
+                        (blood === '' || card.dataset.blood === blood) &&
+                        (tel === '' || card.dataset.tel.indexOf(tel) !== -1) &&
+                        (empno === '' || card.dataset.empno.indexOf(empno) !== -1) &&
+                        (name === '' || card.dataset.name.indexOf(name) !== -1);
+                });
+            }
+
+            function buildPagerButton(label, page, isActive, isDisabled) {
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'pager-btn' + (isActive ? ' active' : '');
+                btn.textContent = label;
+                if (isDisabled) {
+                    btn.disabled = true;
+                } else {
+                    btn.addEventListener('click', function () {
+                        currentPage = page;
+                        render();
+                    });
+                }
+                return btn;
+            }
+
+            function buildEllipsis() {
+                var span = document.createElement('span');
+                span.className = 'pager-ellipsis';
+                span.textContent = '…';
+                return span;
+            }
+
+            function renderPager(totalPages) {
+                pagerNumbers.innerHTML = '';
+
+                if (totalPages <= 1) {
+                    pager.style.display = 'none';
+                    return;
+                }
+                pager.style.display = 'flex';
+
+                pagerPrev.disabled = currentPage === 1;
+                pagerNext.disabled = currentPage === totalPages;
+
+                var pagesToShow = [];
+                for (var p = 1; p <= totalPages; p++) {
+                    if (p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1) {
+                        pagesToShow.push(p);
+                    }
+                }
+
+                var lastRendered = 0;
+                pagesToShow.forEach(function (p) {
+                    if (lastRendered && p - lastRendered > 1) {
+                        pagerNumbers.appendChild(buildEllipsis());
+                    }
+                    pagerNumbers.appendChild(buildPagerButton(p, p, p === currentPage, false));
+                    lastRendered = p;
+                });
+            }
+
+            function render() {
+                var matching = getMatchingCards();
+                var totalPages = Math.max(1, Math.ceil(matching.length / PAGE_SIZE));
+
+                if (currentPage > totalPages) currentPage = totalPages;
+                if (currentPage < 1) currentPage = 1;
+
+                var start = (currentPage - 1) * PAGE_SIZE;
+                var end = start + PAGE_SIZE;
+
+                cards.forEach(function (card) {
+                    card.style.display = 'none';
+                });
+
+                matching.slice(start, end).forEach(function (card) {
+                    card.style.display = '';
+                });
+
+                empty.style.display = matching.length === 0 ? '' : 'none';
+                renderPager(totalPages);
+            }
+
+            function applyFiltersAndResetPage() {
+                currentPage = 1;
+                render();
+            }
+
+            [fDept, fDesig, fBlood].forEach(function (el) {
+                el.addEventListener('change', applyFiltersAndResetPage);
+            });
+            [fTel, fEmpNo, fName].forEach(function (el) {
+                el.addEventListener('input', applyFiltersAndResetPage);
+            });
+
+            fClear.addEventListener('click', function () {
+                fDept.value = '';
+                fTel.value = '';
+                fDesig.value = '';
+                fEmpNo.value = '';
+                fName.value = '';
+                fBlood.value = '';
+                applyFiltersAndResetPage();
+            });
+
+            pagerPrev.addEventListener('click', function () {
+                if (currentPage > 1) {
+                    currentPage--;
+                    render();
+                }
+            });
+            pagerNext.addEventListener('click', function () {
+                var matching = getMatchingCards();
+                var totalPages = Math.max(1, Math.ceil(matching.length / PAGE_SIZE));
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    render();
+                }
+            });
+
+            render();
+        })();
+    </script>
+}

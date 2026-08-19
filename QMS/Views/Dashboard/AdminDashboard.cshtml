@@ -1,13 +1,8 @@
-﻿@{
+﻿@model QMS.Models.DTOs.DashboardViewModel
+@{
     ViewBag.Title = "Admin Dashboard";
     ViewBag.ActiveMenu = "Dashboard";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-
-    // TODO: replace with real data
-    int totalEmployees = 0;
-    int totalUsers = 0;
-    int pendingRequests = 0;
-    int completedRequests = 0;
 }
 
 <div class="welcome">
@@ -16,26 +11,23 @@
 </div>
 
 <div class="cards">
-    <div class="card"><h3>Total Employees</h3><div class="number">@totalEmployees</div></div>
-    <div class="card"><h3>Total Users</h3><div class="number">@totalUsers</div></div>
-    <div class="card"><h3>Pending Requests</h3><div class="number">@pendingRequests</div></div>
-    <div class="card"><h3>Completed Requests</h3><div class="number">@completedRequests</div></div>
+    <div class="card"><h3>Total Employees</h3><div class="number">@Model.TotalEmployees</div></div>
+    <div class="card"><h3>Total Users</h3><div class="number">@Model.TotalUsers</div></div>
+    <div class="card"><h3>Pending Requests</h3><div class="number">@Model.PendingRequests</div></div>
+    <div class="card"><h3>Completed Requests</h3><div class="number">@Model.CompletedRequests</div></div>
 </div>
 
 <div class="sections">
     <div class="panel">
         <h3>Recent Activity</h3>
-        @* TODO: replace with real activity feed *@
         <div class="activity">No recent activity</div>
     </div>
-
     <div class="panel">
         <h3>Quick Actions</h3>
         <div class="quick-actions">
-            <a href="@Url.Action("Create", "Employee")" class="action-btn">Add Employee</a>
+            <a href="@Url.Action("Create", "EmployeeMaster")" class="action-btn">Add Employee</a>
+            <a href="@Url.Action("ImportExcel", "EmployeeMaster")" class="action-btn">Import from Excel</a>
             <a href="#" class="action-btn">Manage Users</a>
-            <a href="#" class="action-btn">View Reports</a>
-
         </div>
     </div>
 </div>

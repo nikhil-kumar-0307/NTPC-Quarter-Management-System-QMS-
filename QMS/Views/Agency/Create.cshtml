@@ -6,92 +6,128 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="welcome">
+<div class="page-header">
+    <a href="@Url.Action("Index", "Agency")" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back to Agency List
+    </a>
     <h2>Add Agency</h2>
     <p>Enter agency and quarter allotment details.</p>
 </div>
 
-<div class="form-card">
+@using (Html.BeginForm("Create", "Agency", FormMethod.Post, new { id = "agencyForm" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "validation-summary" })
 
-    @using (Html.BeginForm("Create", "Agency", FormMethod.Post))
-    {
-        @Html.AntiForgeryToken()
-        @Html.ValidationSummary(true, "", new { @class = "validation-summary" })
+    <div class="form-main">
 
-        <div class="form-grid">
-
-            <div class="form-group">
-                @Html.LabelFor(m => m.AgencyName)
-                @Html.TextBoxFor(m => m.AgencyName, new { @class = "form-control", placeholder = "Agency name" })
-                @Html.ValidationMessageFor(m => m.AgencyName, "", new { @class = "validation-error" })
+        <div class="form-section">
+            <div class="section-title">
+                <span class="section-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"></path><path d="M5 21V7l8-4v18"></path><path d="M19 21V11l-6-4"></path></svg>
+                </span>
+                Agency Details
             </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.AgencyName)
+                    @Html.TextBoxFor(m => m.AgencyName, new { @class = "form-control", placeholder = "Agency name" })
+                    @Html.ValidationMessageFor(m => m.AgencyName, "", new { @class = "validation-error" })
+                </div>
 
-            <div class="form-group">
-                @Html.LabelFor(m => m.Contact)
-                @Html.TextBoxFor(m => m.Contact, new { @class = "form-control", placeholder = "Contact person / no." })
-                @Html.ValidationMessageFor(m => m.Contact, "", new { @class = "validation-error" })
+                <div class="form-group">
+                    @Html.LabelFor(m => m.PoNumber)
+                    @Html.TextBoxFor(m => m.PoNumber, new { @class = "form-control id-field", placeholder = "e.g. PO-4521" })
+                    @Html.ValidationMessageFor(m => m.PoNumber, "", new { @class = "validation-error" })
+                </div>
             </div>
+        </div>
 
-            <div class="form-group">
-                @Html.LabelFor(m => m.PoNumber)
-                @Html.TextBoxFor(m => m.PoNumber, new { @class = "form-control id-field", placeholder = "e.g. PO-4521" })
-                @Html.ValidationMessageFor(m => m.PoNumber, "", new { @class = "validation-error" })
+        <div class="form-section">
+            <div class="section-title">
+                <span class="section-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                </span>
+                Contact Details
             </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Contact)
+                    @Html.TextBoxFor(m => m.Contact, new { @class = "form-control", placeholder = "Contact person / no." })
+                    @Html.ValidationMessageFor(m => m.Contact, "", new { @class = "validation-error" })
+                </div>
 
-            <div class="form-group">
-                @Html.LabelFor(m => m.QuarterNo)
-                @Html.TextBoxFor(m => m.QuarterNo, new { @class = "form-control id-field", placeholder = "e.g. Q-204" })
-                @Html.ValidationMessageFor(m => m.QuarterNo, "", new { @class = "validation-error" })
+                <div class="form-group">
+                    @Html.LabelFor(m => m.MobileNo)
+                    @Html.TextBoxFor(m => m.MobileNo, new { @class = "form-control", placeholder = "Mobile number" })
+                    @Html.ValidationMessageFor(m => m.MobileNo, "", new { @class = "validation-error" })
+                </div>
+
+                <div class="form-group full-width">
+                    @Html.LabelFor(m => m.EmailId)
+                    @Html.TextBoxFor(m => m.EmailId, new { @class = "form-control", placeholder = "agency@example.com" })
+                    @Html.ValidationMessageFor(m => m.EmailId, "", new { @class = "validation-error" })
+                </div>
             </div>
+        </div>
 
-            <div class="form-group">
-                @Html.LabelFor(m => m.QuarterType)
-                @Html.DropDownListFor(m => m.QuarterType, (SelectList)ViewBag.QuarterTypes, "Select type", new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.QuarterType, "", new { @class = "validation-error" })
+        <div class="form-section">
+            <div class="section-title">
+                <span class="section-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                </span>
+                Quarter Allotment
             </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.QuarterNo)
+                    @Html.TextBoxFor(m => m.QuarterNo, new { @class = "form-control id-field", placeholder = "e.g. Q-204" })
+                    @Html.ValidationMessageFor(m => m.QuarterNo, "", new { @class = "validation-error" })
+                </div>
 
-            <div class="form-group">
-                @Html.LabelFor(m => m.MobileNo)
-                @Html.TextBoxFor(m => m.MobileNo, new { @class = "form-control", placeholder = "Mobile number" })
-                @Html.ValidationMessageFor(m => m.MobileNo, "", new { @class = "validation-error" })
+                <div class="form-group">
+                    @Html.LabelFor(m => m.QuarterType)
+                    @Html.DropDownListFor(m => m.QuarterType, (SelectList)ViewBag.QuarterTypes, "Select type", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.QuarterType, "", new { @class = "validation-error" })
+                </div>
             </div>
-
-            <div class="form-group">
-                @Html.LabelFor(m => m.EmailId)
-                @Html.TextBoxFor(m => m.EmailId, new { @class = "form-control", placeholder = "agency@example.com" })
-                @Html.ValidationMessageFor(m => m.EmailId, "", new { @class = "validation-error" })
-            </div>
-
         </div>
 
         <div class="form-actions">
             <a href="@Url.Action("Index", "Agency")" class="btn-secondary">Cancel</a>
             <button type="submit" class="btn-primary">Save Agency</button>
         </div>
-    }
 
-</div>
+    </div>
+}
 
 @section Styles {
     <style>
-        .welcome {
-            margin-bottom: 25px;
+        .page-header {
+            margin-bottom: 24px;
         }
 
-            .welcome h2 {
-                margin-bottom: 8px;
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #64748b;
+            text-decoration: none;
+            margin-bottom: 14px;
+        }
+
+            .back-link:hover {
+                color: #0f172a;
             }
 
-            .welcome p {
-                color: #777;
-            }
+        .page-header h2 {
+            margin-bottom: 6px;
+        }
 
-        .form-card {
-            background: white;
-            padding: 30px 35px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            max-width: 800px;
+        .page-header p {
+            color: #777;
         }
 
         .validation-summary {
@@ -102,12 +138,55 @@
             border-radius: 6px;
             margin-bottom: 20px;
             font-size: 13px;
+            max-width: 800px;
+        }
+
+        .form-main {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 800px;
+        }
+
+        .form-section {
+            background: white;
+            padding: 26px 28px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            color: #0f172a;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #eef1f6;
+        }
+
+        .section-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+            background: #f1f5f9;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
         }
 
         .form-group label {
@@ -125,6 +204,7 @@
             background: #f4f6fb;
             border-radius: 6px;
             font-size: 14px;
+            font-family: inherit;
         }
 
             .form-control:focus {
@@ -149,11 +229,10 @@
             display: flex;
             justify-content: flex-end;
             gap: 12px;
-            margin-top: 28px;
         }
 
         .btn-primary {
-            padding: 11px 24px;
+            padding: 12px 26px;
             border: none;
             border-radius: 6px;
             background: #0f172a;
@@ -168,9 +247,10 @@
             }
 
         .btn-secondary {
-            padding: 11px 24px;
+            padding: 12px 26px;
             border-radius: 6px;
             border: 1px solid #d8dee8;
+            background: white;
             color: #444;
             text-decoration: none;
             font-size: 14px;
@@ -182,7 +262,7 @@
                 background: #f4f6fb;
             }
 
-        @@media (max-width: 700px) {
+        @@media (max-width: 600px) {
             .form-grid {
                 grid-template-columns: 1fr;
             }

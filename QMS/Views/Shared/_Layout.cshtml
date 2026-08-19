@@ -3,40 +3,245 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title - QMS</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        /* ===================== SITE HEADER ===================== */
+        .site-header {
+            background: #0b3253;
+            color: #fff;
+        }
+
+        .site-header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            gap: 20px;
+        }
+
+        .site-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .site-logo {
+            width: 110px;
+            height: 60px;
+            border-radius: 4px;
+            object-fit: cover;
+            background: #fff;
+            flex-shrink: 0;
+        }
+
+        .site-brand-text .brand-hi {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 0.3px;
+        }
+
+        .site-brand-text .brand-tagline {
+            font-size: 10px;
+            color: #b9c6d4;
+            margin-top: 2px;
+        }
+
+        .site-header-center {
+            text-align: center;
+            flex: 1;
+        }
+
+            .site-header-center .plant-name {
+                color: #ffcc33;
+                font-weight: 800;
+                font-size: 20px;
+                letter-spacing: 0.3px;
+            }
+
+            .site-header-center .plant-sub {
+                color: #e5eaf0;
+                font-size: 12px;
+                margin-top: 2px;
+            }
+
+        .site-header-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-shrink: 0;
+        }
+
+        .status-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+            .status-dots span {
+                width: 9px;
+                height: 9px;
+                border-radius: 50%;
+                display: inline-block;
+            }
+
+            .status-dots .d1 {
+                background: #3aa0ff;
+            }
+
+            .status-dots .d2 {
+                background: #35c26a;
+            }
+
+            .status-dots .d3 {
+                background: #ff9f2e;
+            }
+
+            .status-dots .d4 {
+                background: #ff4d4d;
+            }
+
+        .header-date {
+            font-size: 12px;
+            color: #e5eaf0;
+            white-space: nowrap;
+        }
+
+        .login-btn {
+            background: #ffcc33;
+            color: #0b3253;
+            font-weight: 700;
+            border: none;
+            border-radius: 5px;
+            padding: 9px 22px;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+            .login-btn:hover {
+                background: #f0bd1f;
+                color: #0b3253;
+            }
+
+        /* ===================== SEARCH BAR ===================== */
+        .site-search-bar {
+            background: #082741;
+            padding: 10px 20px;
+        }
+
+        .site-search-inner {
+            max-width: 360px;
+            display: flex;
+        }
+
+            .site-search-inner input {
+                flex: 1;
+                border: none;
+                padding: 8px 12px;
+                font-size: 13px;
+                border-radius: 4px 0 0 4px;
+                outline: none;
+            }
+
+            .site-search-inner button {
+                border: none;
+                background: #ffcc33;
+                padding: 0 14px;
+                border-radius: 0 4px 4px 0;
+                cursor: pointer;
+                font-weight: 700;
+                color: #0b3253;
+            }
+
+        @@media (max-width: 900px) {
+            .site-header-top {
+                flex-wrap: wrap;
+            }
+
+            .site-header-center {
+                order: 3;
+                width: 100%;
+                text-align: left;
+            }
+
+            .header-date {
+                display: none;
+            }
+        }
+
+        /* ===================== PAGE CONTENT ===================== */
+        .page-content {
+            padding: 20px 20px 30px;
+            background: #f4f5f7;
+            min-height: 80vh;
+        }
+    </style>
+
+    @RenderSection("Styles", required: false)
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+
+    <header class="site-header">
+        <div class="site-header-top">
+            <div class="site-header-left">
+                <img class="site-logo" src="~/Content/images/ntpc.png" alt="NTPC Logo" />
+                <div class="site-brand-text">
+                    <div class="brand-hi">NTPC KAHALGAON</div>
+                    <div class="brand-tagline">Powering Unification Of Processes</div>
+                </div>
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                </ul>
+
+            <div class="site-header-center">
+                <div class="plant-name">KAHALGAON SUPER THERMAL POWER STATION</div>
+                <div class="plant-sub">2340 MW (STAGE-1: 4X210, STAGE-2: 3X500)</div>
+            </div>
+
+            <div class="site-header-right">
+                <div class="status-dots">
+                    <span class="d1"></span>
+                    <span class="d2"></span>
+                    <span class="d3"></span>
+                    <span class="d4"></span>
+                </div>
+
+                <div class="header-date">@DateTime.Now.ToString("dddd, dd MMM yyyy")</div>
+
+                @Html.ActionLink("LOGIN", "Login", "Account", null, new { @class = "login-btn" })
             </div>
         </div>
-    </div>
-    <div class="container body-content">
+
+        <div class="site-search-bar">
+            <div class="site-search-inner">
+                <input type="text" placeholder="Directory Search" />
+                <button type="button">&#128269;</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="page-content">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
     </div>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

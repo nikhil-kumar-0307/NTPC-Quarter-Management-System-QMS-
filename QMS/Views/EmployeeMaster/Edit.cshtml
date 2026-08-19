@@ -1,7 +1,7 @@
 ﻿@model QMS.Models.DTOs.EmployeeMasterDto
 
 @{
-    ViewBag.Title = "Add Employee";
+    ViewBag.Title = "Edit Employee";
     ViewBag.ActiveMenu = "EmployeeMaster";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
@@ -11,13 +11,15 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
         Back to Employee List
     </a>
-    <h2>Add Employee</h2>
-    <p>Enter employee, contact, and quarter allotment details.</p>
+    <h2>Edit Employee</h2>
+    <p>Update employee, contact, and quarter allotment details.</p>
 </div>
 
-@using (Html.BeginForm("Create", "EmployeeMaster", FormMethod.Post, new { enctype = "multipart/form-data", id = "employeeForm" }))
+@using (Html.BeginForm("Edit", "EmployeeMaster", FormMethod.Post, new { enctype = "multipart/form-data", id = "employeeForm" }))
 {
     @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.ExistingPhotoPath)
     @Html.ValidationSummary(true, "", new { @class = "validation-summary" })
 
     <div class="form-layout">
@@ -138,7 +140,7 @@
 
             <div class="form-actions">
                 <a href="@Url.Action("Index", "EmployeeMaster")" class="btn-secondary">Cancel</a>
-                <button type="submit" class="btn-primary">Save Employee</button>
+                <button type="submit" class="btn-primary">Save Changes</button>
             </div>
 
         </div>
@@ -154,9 +156,18 @@
 
                 <label for="photoInput" class="photo-upload" id="photoUpload">
                     <div class="photo-preview" id="photoPreview">
-                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        @if (!string.IsNullOrEmpty(Model.ExistingPhotoPath))
+                        {
+                            <img src="@Url.Content(Model.ExistingPhotoPath)" alt="Current photo" />
+                        }
+                        else
+                        {
+                            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        }
                     </div>
-                    <span class="photo-upload-text" id="photoUploadText">Click to upload photo</span>
+                    <span class="photo-upload-text" id="photoUploadText">
+                        @(string.IsNullOrEmpty(Model.ExistingPhotoPath) ? "Click to upload photo" : "Click to change photo")
+                    </span>
                     <span class="photo-upload-hint">JPG or PNG</span>
                     @Html.TextBoxFor(m => m.Photo, new { type = "file", id = "photoInput", @class = "photo-input", accept = "image/*" })
                 </label>
@@ -356,7 +367,6 @@
                 background: #f4f6fb;
             }
 
-        /* Photo card */
         .form-side {
             position: sticky;
             top: 20px;

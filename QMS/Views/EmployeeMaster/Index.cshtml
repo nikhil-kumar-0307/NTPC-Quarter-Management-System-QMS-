@@ -6,44 +6,75 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        @TempData["Success"]
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-error">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        @TempData["Error"]
+    </div>
+}
+
 <div class="welcome list-header">
     <div>
         <h2>Employee Master</h2>
         <p>Employee records and their quarter allotment status.</p>
     </div>
-    <a href="@Url.Action("Create", "EmployeeMaster")" class="btn-primary">+ Add Employee</a>
+    <div class="header-actions">
+        <a href="@Url.Action("ImportExcel", "EmployeeMaster")" class="btn-secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            Import from Excel
+        </a>
+        <a href="@Url.Action("Create", "EmployeeMaster")" class="btn-primary">+ Add Employee</a>
+    </div>
 </div>
 
 <div class="table-card">
     <table class="emp-table">
+        <colgroup>
+            <col style="width:56px;" />
+            <col style="width:15%;" />
+            <col style="width:9%;" />
+            <col style="width:17%;" />
+            <col style="width:12%;" />
+            <col style="width:8%;" />
+            <col style="width:9%;" />
+            <col style="width:13%;" />
+            <col style="width:6%;" />
+            <col style="width:82px;" />
+        </colgroup>
         <thead>
             <tr>
                 <th></th>
                 <th>Name</th>
-                <th>Employee No</th>
-                <th>Department</th>
-                <th>Designation</th>
+                <th>Emp No</th>
+                <th>Dept / Designation</th>
                 <th>Mobile No</th>
-                <th>Quarter No</th>
-                <th>Quarter Type</th>
+                <th>Quarter</th>
                 <th>Status</th>
-                <th>DOB</th>
-                <th>Retirement Date</th>
-                <th>Blood Group</th>
+                <th>DOB / Retirement</th>
+                <th>Blood</th>
+                <th></th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="empTableBody">
             @if (!Model.Any())
             {
                 <tr>
-                    <td colspan="11" class="empty-row">No employees added yet.</td>
+                    <td colspan="10" class="empty-row">No employees added yet.</td>
                 </tr>
             }
             else
             {
                 foreach (var emp in Model)
                 {
-                    <tr>
+                    <tr class="emp-row">
                         <td>
                             @if (!string.IsNullOrEmpty(emp.PhotoPath))
                             {
@@ -54,17 +85,35 @@
                                 <div class="avatar avatar-placeholder">@emp.EmployeeName.Substring(0, 1)</div>
                             }
                         </td>
-                        <td>@emp.EmployeeName</td>
+                        <td class="name-cell">@emp.EmployeeName</td>
                         <td class="id-field">@emp.EmployeeNo</td>
-                        <td>@emp.Department</td>
-                        <td>@emp.Designation</td>
-                        <td>@emp.MobileNo</td>
-                        <td class="id-field">@emp.QuarterNo</td>
-                        <td>@emp.QuarterType</td>
+                        <td>
+                            <div class="primary-text">@emp.Designation</div>
+                            <div class="sub-text">@emp.Department</div>
+                        </td>
+                        <td class="id-field">@emp.MobileNo</td>
+                        <td class="id-field">@emp.QuarterType/@emp.QuarterNo</td>
                         <td><span class="badge badge-@emp.Status.ToLower()">@emp.Status</span></td>
-                        <td>@emp.DateOfBirth.ToString("dd-MMM-yyyy")</td>
-                        <td>@emp.DateOfRetirement.ToString("dd-MMM-yyyy")</td>
-                        <td>@emp.BloodGroup</td>
+                        <td>
+                            <div class="primary-text">@emp.DateOfBirth.ToString("dd-MMM-yyyy")</div>
+                            <div class="sub-text">Retires @emp.DateOfRetirement.ToString("MMM-yyyy")</div>
+                        </td>
+                        <td class="blood-cell">@emp.BloodGroup</td>
+                        <td>
+                            <div class="row-actions">
+                                <a href="@Url.Action("Edit", "EmployeeMaster", new { id = emp.Id })" class="icon-btn icon-btn-edit" title="Edit">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"></path></svg>
+                                </a>
+                                <button type="button"
+                                        class="icon-btn icon-btn-delete"
+                                        title="Delete"
+                                        data-delete-url="@Url.Action("Delete", "EmployeeMaster", new { id = emp.Id })"
+                                        data-employee-name="@emp.EmployeeName"
+                                        onclick="openDeleteModal(this)">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                </button>
+                            </div>
+                        </td>
                     </tr>
                 }
             }
@@ -72,8 +121,172 @@
     </table>
 </div>
 
+@if (Model.Any())
+{
+    <div id="empPager" class="emp-pager" style="display:none;">
+        <button type="button" id="pagerPrev" class="pager-btn pager-nav">&laquo; Prev</button>
+        <div id="pagerNumbers" class="pager-numbers"></div>
+        <button type="button" id="pagerNext" class="pager-btn pager-nav">Next &raquo;</button>
+    </div>
+}
+
+<!-- Delete confirmation modal -->
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal-box">
+        <div class="modal-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        </div>
+        <h3>Delete Employee</h3>
+        <p>Are you sure you want to delete <strong id="deleteEmployeeName"></strong>? This action cannot be undone.</p>
+        <form id="deleteForm" method="post">
+            @Html.AntiForgeryToken()
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button type="submit" class="btn-danger">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openDeleteModal(btn) {
+            var url = btn.getAttribute('data-delete-url');
+            var name = btn.getAttribute('data-employee-name');
+            document.getElementById('deleteEmployeeName').textContent = name;
+            document.getElementById('deleteForm').setAttribute('action', url);
+            document.getElementById('deleteModal').classList.add('open');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('open');
+        }
+
+        document.getElementById('deleteModal').addEventListener('click', function (e) {
+            if (e.target === this) closeDeleteModal();
+        });
+
+        // ---------- Pagination (20 rows per page) ----------
+        (function () {
+            var PAGE_SIZE = 20;
+
+            var tbody = document.getElementById('empTableBody');
+            if (!tbody) return;
+
+            var rows = Array.prototype.slice.call(tbody.getElementsByClassName('emp-row'));
+            if (rows.length === 0) return; // "No employees added yet" case
+
+            var pager = document.getElementById('empPager');
+            var pagerNumbers = document.getElementById('pagerNumbers');
+            var pagerPrev = document.getElementById('pagerPrev');
+            var pagerNext = document.getElementById('pagerNext');
+
+            var currentPage = 1;
+
+            function buildPagerButton(page, isActive) {
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'pager-btn' + (isActive ? ' active' : '');
+                btn.textContent = page;
+                btn.addEventListener('click', function () {
+                    currentPage = page;
+                    render();
+                });
+                return btn;
+            }
+
+            function buildEllipsis() {
+                var span = document.createElement('span');
+                span.className = 'pager-ellipsis';
+                span.textContent = '…';
+                return span;
+            }
+
+            function renderPager(totalPages) {
+                pagerNumbers.innerHTML = '';
+
+                if (totalPages <= 1) {
+                    pager.style.display = 'none';
+                    return;
+                }
+                pager.style.display = 'flex';
+
+                pagerPrev.disabled = currentPage === 1;
+                pagerNext.disabled = currentPage === totalPages;
+
+                var pagesToShow = [];
+                for (var p = 1; p <= totalPages; p++) {
+                    if (p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1) {
+                        pagesToShow.push(p);
+                    }
+                }
+
+                var lastRendered = 0;
+                pagesToShow.forEach(function (p) {
+                    if (lastRendered && p - lastRendered > 1) {
+                        pagerNumbers.appendChild(buildEllipsis());
+                    }
+                    pagerNumbers.appendChild(buildPagerButton(p, p === currentPage));
+                    lastRendered = p;
+                });
+            }
+
+            function render() {
+                var totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+                if (currentPage > totalPages) currentPage = totalPages;
+                if (currentPage < 1) currentPage = 1;
+
+                var start = (currentPage - 1) * PAGE_SIZE;
+                var end = start + PAGE_SIZE;
+
+                rows.forEach(function (row, idx) {
+                    row.style.display = (idx >= start && idx < end) ? '' : 'none';
+                });
+
+                renderPager(totalPages);
+            }
+
+            pagerPrev.addEventListener('click', function () {
+                if (currentPage > 1) {
+                    currentPage--;
+                    render();
+                }
+            });
+            pagerNext.addEventListener('click', function () {
+                var totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    render();
+                }
+            });
+
+            render();
+        })();
+    </script>
+}
+
 @section Styles {
     <style>
+        .alert {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
         .list-header {
             display: flex;
             justify-content: space-between;
@@ -89,6 +302,12 @@
                 color: #777;
             }
 
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
         .btn-primary {
             padding: 10px 20px;
             border: none;
@@ -98,45 +317,116 @@
             font-weight: bold;
             font-size: 14px;
             text-decoration: none;
+            cursor: pointer;
         }
 
             .btn-primary:hover {
                 background: #1e293b;
             }
 
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: white;
+            color: #0f172a;
+            font-weight: bold;
+            font-size: 14px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background .15s, border-color .15s;
+        }
+
+            .btn-secondary:hover {
+                background: #f4f6fb;
+                border-color: #0f172a;
+            }
+
+        .btn-danger {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background: #dc2626;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+            .btn-danger:hover {
+                background: #b91c1c;
+            }
+
         .table-card {
             background: white;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            overflow: auto;
+            overflow: hidden;
+            overflow-x: auto;
         }
 
         .emp-table {
             width: 100%;
+            table-layout: fixed;
             border-collapse: collapse;
-            min-width: 1100px;
         }
 
             .emp-table th {
                 text-align: left;
-                font-size: 12px;
+                font-size: 11px;
+                font-weight: 700;
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
-                color: #777;
-                background: #f4f6fb;
-                padding: 14px 18px;
+                color: #64748b;
+                background: #f8fafc;
+                padding: 13px 12px;
                 white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                border-bottom: 1px solid #e5e7eb;
             }
 
             .emp-table td {
-                padding: 14px 18px;
-                border-top: 1px solid #eee;
-                font-size: 14px;
-                white-space: nowrap;
+                padding: 12px;
+                border-top: 1px solid #f1f5f9;
+                font-size: 13.5px;
+                color: #1e293b;
+                word-break: break-word;
+                vertical-align: middle;
             }
 
+            .emp-table tbody tr:hover td {
+                background: #fafbfc;
+            }
+
+        .name-cell {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .primary-text {
+            color: #1e293b;
+        }
+
         .id-field {
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: 'IBM Plex Mono', Consolas, monospace;
+            color: #475569;
+            font-size: 13px;
+        }
+
+        .sub-text {
+            font-size: 11.5px;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        .blood-cell {
+            font-weight: 700;
+            color: #dc2626;
+            text-align: center;
         }
 
         .empty-row {
@@ -163,10 +453,13 @@
         }
 
         .badge {
-            padding: 4px 10px;
+            display: inline-block;
+            padding: 4px 12px;
             border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            white-space: nowrap;
         }
 
         .badge-active {
@@ -187,6 +480,149 @@
         .badge-agency {
             background: #dbeafe;
             color: #1d4ed8;
+        }
+
+        /* Row action buttons */
+        .row-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #64748b;
+            cursor: pointer;
+            text-decoration: none;
+            flex-shrink: 0;
+            transition: background .15s, border-color .15s, color .15s;
+        }
+
+        .icon-btn-edit:hover {
+            background: #eff6ff;
+            border-color: #1d4ed8;
+            color: #1d4ed8;
+        }
+
+        .icon-btn-delete:hover {
+            background: #fef2f2;
+            border-color: #dc2626;
+            color: #dc2626;
+        }
+
+        /* ---------- Pager ---------- */
+        .emp-pager {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .pager-btn {
+            min-width: 36px;
+            padding: 7px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #fff;
+            color: #333;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+            .pager-btn:hover:not(:disabled) {
+                background: #f0f0f0;
+            }
+
+            .pager-btn:disabled {
+                opacity: 0.4;
+                cursor: not-allowed;
+            }
+
+            .pager-btn.active {
+                background: #0f172a;
+                border-color: #0f172a;
+                color: #fff;
+                font-weight: 600;
+            }
+
+        .pager-numbers {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .pager-ellipsis {
+            padding: 7px 4px;
+            color: #999;
+        }
+
+        /* Delete confirmation modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+            .modal-overlay.open {
+                display: flex;
+            }
+
+        .modal-box {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            max-width: 380px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .modal-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #fee2e2;
+            color: #dc2626;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .modal-box h3 {
+            margin-bottom: 8px;
+        }
+
+        .modal-box p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 22px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        @@media (max-width: 900px) {
+            .emp-table th:nth-child(9),
+            .emp-table td:nth-child(9) {
+                display: none; /* hide Blood Group column on narrow screens */
+            }
         }
     </style>
 }

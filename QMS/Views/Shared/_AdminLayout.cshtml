@@ -26,6 +26,7 @@
         /* Sidebar */
         .sidebar {
             width: 240px;
+            flex-shrink: 0;
             background: #0f172a;
             color: white;
             padding: 20px;
@@ -63,6 +64,7 @@
         /* Main content */
         .main-content {
             flex: 1;
+            min-width: 0;
         }
 
         .topbar {
@@ -126,7 +128,7 @@
             <h2>QMS</h2>
             <ul>
                 <li><a href="@Url.Action("AdminDashboard", "Dashboard")" class="@(ViewBag.ActiveMenu == "Dashboard" ? "active" : "")">Dashboard</a></li>
-                <li><a href="@Url.Action("Index", "EmployeeMaster")" class="@(ViewBag.ActiveMenu == "EmployeeMaster" ? "active" : "")">Employee Master</a></li>
+                <li><a href="@Url.Action("Index", "EmployeeMaster")" class="@(ViewBag.ActiveMenu == "EmployeeMaster" || ViewBag.ActiveMenu == "EmployeeMasterCreate" || ViewBag.ActiveMenu == "EmployeeMasterImport" ? "active" : "")">Employee Master</a></li>
                 <li><a href="@Url.Action("Index", "Agency")" class="@(ViewBag.ActiveMenu == "Agencies" ? "active" : "")">Agencies</a></li>
                 <li><a href="@Url.Action("Login", "Account")">Logout</a></li>
             </ul>
