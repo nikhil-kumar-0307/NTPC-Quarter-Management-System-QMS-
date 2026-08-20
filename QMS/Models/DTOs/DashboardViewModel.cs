@@ -10,6 +10,7 @@ namespace QMS.Models.DTOs
         public List<string> Departments { get; set; }
         public List<string> Designations { get; set; }
         public List<string> BloodGroups { get; set; }
+        public List<string> Levels { get; set; }
 
         public int TotalEmployees { get; set; }
         public int TotalUsers { get; set; }

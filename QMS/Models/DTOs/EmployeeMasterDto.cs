@@ -25,6 +25,10 @@ namespace QMS.Models.DTOs
         [Required(ErrorMessage = "Designation is required")]
         [StringLength(50)]
         public string Designation { get; set; }
+        [Required(ErrorMessage = "Level is required")]
+        [StringLength(5)]
+        [Display(Name = "Level")]
+        public string Level { get; set; }
 
         [StringLength(100)]
         [EmailAddress(ErrorMessage = "Enter a valid email")]

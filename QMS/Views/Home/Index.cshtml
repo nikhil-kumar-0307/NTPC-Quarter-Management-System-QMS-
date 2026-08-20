@@ -37,6 +37,16 @@
             </select>
         </div>
         <div class="filter-field">
+            <label>Level</label>
+            <select id="f-level">
+                <option value="">All</option>
+                @foreach (var l in Model.Levels)
+                {
+                    <option value="@l">@l</option>
+                }
+            </select>
+        </div>
+        <div class="filter-field">
             <label>EmpNo</label>
             <input type="text" id="f-empno" placeholder="Search emp no" />
         </div>
@@ -74,6 +84,7 @@
                  data-empno="@e.EmployeeNo.ToLowerInvariant()"
                  data-dept="@e.Department"
                  data-desig="@e.Designation"
+                 data-level="@e.Level"
                  data-blood="@e.BloodGroup"
                  data-tel="@tel">
 
@@ -93,7 +104,13 @@
                         <span class="emp-name">@e.EmployeeName</span>
                         <span class="emp-no">@e.EmployeeNo</span>
                     </div>
-                    <div class="emp-desig">@e.Designation@(!string.IsNullOrEmpty(e.Department) ? $" ({e.Department})" : "")</div>
+                    <div class="emp-desig">
+                        @e.Designation@(!string.IsNullOrEmpty(e.Department) ? $" ({e.Department})" : "")
+                        @if (!string.IsNullOrEmpty(e.Level))
+                        {
+                            <span class="emp-level-badge">@e.Level</span>
+                        }
+                    </div>
 
                     <div class="emp-line">
                         <span class="emp-icon">&#128222;</span>
@@ -159,7 +176,7 @@
 
         .emp-filter-bar {
             display: grid;
-            grid-template-columns: repeat(6, 1fr) auto;
+            grid-template-columns: repeat(7, 1fr) auto;
             gap: 14px;
             align-items: end;
             padding-bottom: 18px;
@@ -264,6 +281,18 @@
             border-bottom: 1px solid #e5e5e5;
         }
 
+        .emp-level-badge {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            background: #eff6ff;
+            color: #1d4ed8;
+            vertical-align: middle;
+        }
+
         .emp-line {
             display: flex;
             gap: 8px;
@@ -334,7 +363,7 @@
 
         @@media (max-width: 1100px) {
             .emp-filter-bar {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(4, 1fr);
             }
 
             .emp-grid {
@@ -371,6 +400,7 @@
             var fDept = document.getElementById('f-dept');
             var fTel = document.getElementById('f-tel');
             var fDesig = document.getElementById('f-desig');
+            var fLevel = document.getElementById('f-level');
             var fEmpNo = document.getElementById('f-empno');
             var fName = document.getElementById('f-name');
             var fBlood = document.getElementById('f-blood');
@@ -382,6 +412,7 @@
                 var dept = fDept.value;
                 var tel = fTel.value.trim().toLowerCase();
                 var desig = fDesig.value;
+                var level = fLevel.value;
                 var empno = fEmpNo.value.trim().toLowerCase();
                 var name = fName.value.trim().toLowerCase();
                 var blood = fBlood.value;
@@ -389,6 +420,7 @@
                 return cards.filter(function (card) {
                     return (dept === '' || card.dataset.dept === dept) &&
                         (desig === '' || card.dataset.desig === desig) &&
+                        (level === '' || card.dataset.level === level) &&
                         (blood === '' || card.dataset.blood === blood) &&
                         (tel === '' || card.dataset.tel.indexOf(tel) !== -1) &&
                         (empno === '' || card.dataset.empno.indexOf(empno) !== -1) &&
@@ -475,7 +507,7 @@
                 render();
             }
 
-            [fDept, fDesig, fBlood].forEach(function (el) {
+            [fDept, fDesig, fLevel, fBlood].forEach(function (el) {
                 el.addEventListener('change', applyFiltersAndResetPage);
             });
             [fTel, fEmpNo, fName].forEach(function (el) {
@@ -486,6 +518,7 @@
                 fDept.value = '';
                 fTel.value = '';
                 fDesig.value = '';
+                fLevel.value = '';
                 fEmpNo.value = '';
                 fName.value = '';
                 fBlood.value = '';

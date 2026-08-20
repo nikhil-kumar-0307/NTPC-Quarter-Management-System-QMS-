@@ -15,9 +15,9 @@ namespace QMS.Controllers
             var model = new DashboardViewModel
             {
                 TotalEmployees = _db.EmployeeMasters.Count(),
-                TotalUsers = 0,        // TODO: wire to Users table
-                PendingRequests = 0,   // TODO: wire to Requests table
-                CompletedRequests = 0  // TODO: wire to Requests table
+                TotalUsers = 0,        
+                PendingRequests = 0,  
+                CompletedRequests = 0
             };
             return View(model);
         }

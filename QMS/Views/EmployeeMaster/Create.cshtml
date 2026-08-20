@@ -57,6 +57,12 @@
                     </div>
 
                     <div class="form-group">
+                        @Html.LabelFor(m => m.Level)
+                        @Html.DropDownListFor(m => m.Level, (SelectList)ViewBag.LevelOptions, "Select level", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Level, "", new { @class = "validation-error" })
+                    </div>
+
+                    <div class="form-group">
                         @Html.LabelFor(m => m.DateOfBirth)
                         @{
                             var dobValue = Model.DateOfBirth == default(DateTime) ? "" : Model.DateOfBirth.ToString("yyyy-MM-dd");

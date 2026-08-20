@@ -12,8 +12,7 @@ namespace QMS.Data
     {
         public QMSDbContext() : base("QMSDbContext") { }
 
-        public DbSet <User> Users { get; set; }
-        //public DbSet<Employee> Employees { get; set; }
+        public DbSet <User> Users { get; set; }        
         public DbSet<Agency> Agencies { get; set; }
         public DbSet<EmployeeMaster> EmployeeMasters { get; set; }
     }

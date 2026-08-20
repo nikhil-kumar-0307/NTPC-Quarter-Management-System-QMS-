@@ -18,6 +18,10 @@ namespace QMS.Controllers
         private static readonly string[] QuarterTypes = { "A", "B", "C" };
         private static readonly string[] StatusOptions = { "Active", "Empty", "Retained", "Agency" };
         private static readonly string[] BloodGroups = { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
+        private static readonly string[] LevelOptions =
+    Enumerable.Range(1, 10).Select(i => "W" + i)
+        .Concat(Enumerable.Range(1, 10).Select(i => "E" + i))
+        .ToArray();
 
         // GET: EmployeeMaster
         public ActionResult Index()
@@ -55,6 +59,7 @@ namespace QMS.Controllers
                 EmployeeNo = model.EmployeeNo,
                 Department = model.Department,
                 Designation = model.Designation,
+                Level = model.Level,
                 EmailId = model.EmailId,
                 MobileNo = model.MobileNo,
                 IntercomResidence = model.IntercomResidence,
@@ -99,6 +104,7 @@ namespace QMS.Controllers
                 EmployeeNo = employee.EmployeeNo,
                 Department = employee.Department,
                 Designation = employee.Designation,
+                Level = employee.Level,
                 EmailId = employee.EmailId,
                 MobileNo = employee.MobileNo,
                 IntercomResidence = employee.IntercomResidence,
@@ -136,6 +142,7 @@ namespace QMS.Controllers
             employee.EmployeeNo = model.EmployeeNo;
             employee.Department = model.Department;
             employee.Designation = model.Designation;
+            employee.Level = model.Level;
             employee.EmailId = model.EmailId;
             employee.MobileNo = model.MobileNo;
             employee.IntercomResidence = model.IntercomResidence;
@@ -214,6 +221,7 @@ namespace QMS.Controllers
             ViewBag.QuarterTypes = new SelectList(QuarterTypes);
             ViewBag.StatusOptions = new SelectList(StatusOptions);
             ViewBag.BloodGroups = new SelectList(BloodGroups);
+            ViewBag.LevelOptions = new SelectList(LevelOptions);
         }
 
         // GET: EmployeeMaster/ImportExcel
@@ -280,7 +288,7 @@ namespace QMS.Controllers
                         string employeeNo = worksheet.Cells[row, 2].Text.Trim();
 
                         if (string.IsNullOrWhiteSpace(employeeName) && string.IsNullOrWhiteSpace(employeeNo))
-                            continue; // fully blank row, skip silently
+                            continue;
 
                         result.TotalRows++;
 
@@ -288,25 +296,30 @@ namespace QMS.Controllers
                         {
                             string department = worksheet.Cells[row, 3].Text.Trim();
                             string designation = worksheet.Cells[row, 4].Text.Trim();
-                            string emailId = worksheet.Cells[row, 5].Text.Trim();
-                            string mobileNo = worksheet.Cells[row, 6].Text.Trim();
-                            string intercomResidence = worksheet.Cells[row, 7].Text.Trim();
-                            string intercomOffice = worksheet.Cells[row, 8].Text.Trim();
-                            string bloodGroup = worksheet.Cells[row, 10].Text.Trim();
-                            string quarterNo = worksheet.Cells[row, 11].Text.Trim();
-                            string quarterType = worksheet.Cells[row, 12].Text.Trim();
-                            string status = worksheet.Cells[row, 13].Text.Trim();
+                            string level = worksheet.Cells[row, 5].Text.Trim();
+                            string emailId = worksheet.Cells[row, 6].Text.Trim();
+                            string mobileNo = worksheet.Cells[row, 7].Text.Trim();
+                            string intercomResidence = worksheet.Cells[row, 8].Text.Trim();
+                            string intercomOffice = worksheet.Cells[row, 9].Text.Trim();
+                            string bloodGroup = worksheet.Cells[row, 11].Text.Trim();
+                            string quarterNo = worksheet.Cells[row, 12].Text.Trim();
+                            string quarterType = worksheet.Cells[row, 13].Text.Trim();
+                            string status = worksheet.Cells[row, 14].Text.Trim();
 
                             if (string.IsNullOrWhiteSpace(employeeName)) throw new Exception("Employee Name is required.");
                             if (string.IsNullOrWhiteSpace(employeeNo)) throw new Exception("Employee No is required.");
                             if (string.IsNullOrWhiteSpace(department)) throw new Exception("Department is required.");
                             if (string.IsNullOrWhiteSpace(designation)) throw new Exception("Designation is required.");
+                            if (string.IsNullOrWhiteSpace(level)) throw new Exception("Level is required.");
                             if (string.IsNullOrWhiteSpace(quarterNo)) throw new Exception("Quarter No is required.");
                             if (string.IsNullOrWhiteSpace(quarterType)) throw new Exception("Quarter Type is required.");
                             if (string.IsNullOrWhiteSpace(status)) throw new Exception("Status is required.");
 
                             // Read the date directly from the cell instead of a culture-formatted string
-                            DateTime dob = ParseExcelDate(worksheet.Cells[row, 9]);
+                            DateTime dob = ParseExcelDate(worksheet.Cells[row, 10]);
+
+                            if (!LevelOptions.Contains(level, StringComparer.OrdinalIgnoreCase))
+                                throw new Exception($"Invalid Level '{level}'. Allowed: {string.Join(", ", LevelOptions)}.");
 
                             if (!QuarterTypes.Contains(quarterType, StringComparer.OrdinalIgnoreCase))
                                 throw new Exception($"Invalid Quarter Type '{quarterType}'. Allowed: {string.Join(", ", QuarterTypes)}.");
@@ -317,14 +330,14 @@ namespace QMS.Controllers
                             if (!seenInFile.Add(employeeNo))
                                 throw new Exception($"Duplicate Employee No '{employeeNo}' within the file (only first occurrence processed).");
 
-                            var existing = _db.EmployeeMasters
-                                .FirstOrDefault(e => e.EmployeeNo == employeeNo);
+                            var existing = _db.EmployeeMasters.FirstOrDefault(e => e.EmployeeNo == employeeNo);
 
                             if (existing != null)
                             {
                                 existing.EmployeeName = employeeName;
                                 existing.Department = department;
                                 existing.Designation = designation;
+                                existing.Level = level;
                                 existing.EmailId = emailId;
                                 existing.MobileNo = mobileNo;
                                 existing.IntercomResidence = intercomResidence;
@@ -346,6 +359,7 @@ namespace QMS.Controllers
                                     EmployeeNo = employeeNo,
                                     Department = department,
                                     Designation = designation,
+                                    Level = level,
                                     EmailId = emailId,
                                     MobileNo = mobileNo,
                                     IntercomResidence = intercomResidence,
@@ -376,11 +390,7 @@ namespace QMS.Controllers
             return View("ImportResult", result);
         }
 
-        /// <summary>
-        /// Reads a Date of Birth value from an Excel cell reliably, regardless of
-        /// whether the cell is a true Excel date (numeric) or plain text, and
-        /// regardless of the server's regional/culture settings.
-        /// </summary>
+       
         private DateTime ParseExcelDate(ExcelRange cell)
         {
             if (cell.Value is DateTime dt)
@@ -419,7 +429,7 @@ namespace QMS.Controllers
                 var sheet = package.Workbook.Worksheets.Add("Employees");
                 string[] headers =
                 {
-                    "EmployeeName", "EmployeeNo", "Department", "Designation", "EmailId",
+                    "EmployeeName", "EmployeeNo", "Department", "Designation", "Level", "EmailId",
                     "MobileNo", "IntercomResidence", "IntercomOffice", "DateOfBirth",
                     "BloodGroup", "QuarterNo", "QuarterType", "Status"
                 };
@@ -431,15 +441,16 @@ namespace QMS.Controllers
                 sheet.Cells[2, 2].Value = "EMP001";
                 sheet.Cells[2, 3].Value = "Engineering";
                 sheet.Cells[2, 4].Value = "Manager";
-                sheet.Cells[2, 5].Value = "john.doe@example.com";
-                sheet.Cells[2, 6].Value = "9876543210";
-                sheet.Cells[2, 7].Value = "101";
-                sheet.Cells[2, 8].Value = "202";
-                sheet.Cells[2, 9].Value = "01/15/1985";
-                sheet.Cells[2, 10].Value = "O+";
-                sheet.Cells[2, 11].Value = "12";
-                sheet.Cells[2, 12].Value = "A";
-                sheet.Cells[2, 13].Value = "Active";
+                sheet.Cells[2, 5].Value = "E3";
+                sheet.Cells[2, 6].Value = "john.doe@example.com";
+                sheet.Cells[2, 7].Value = "9876543210";
+                sheet.Cells[2, 8].Value = "101";
+                sheet.Cells[2, 9].Value = "202";
+                sheet.Cells[2, 10].Value = "01/15/1985";
+                sheet.Cells[2, 11].Value = "O+";
+                sheet.Cells[2, 12].Value = "12";
+                sheet.Cells[2, 13].Value = "A";
+                sheet.Cells[2, 14].Value = "Active";
 
                 sheet.Cells.AutoFitColumns();
 

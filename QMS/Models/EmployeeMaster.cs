@@ -21,6 +21,10 @@ namespace QMS.Data.Models
         [Required, StringLength(50)]
         public string Designation { get; set; }
 
+
+        [Required, StringLength(5)]
+        public string Level { get; set; }
+
         [StringLength(100)]
         public string EmailId { get; set; }
 
