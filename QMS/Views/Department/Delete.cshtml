@@ -1,0 +1,133 @@
+﻿@model QMS.Models.DTOs.DepartmentDto
+
+@{
+    ViewBag.Title = "Delete Department";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+    <style>
+        .page-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            padding: 25px;
+            max-width: 500px;
+        }
+
+        .warning-text {
+            color: #991b1b;
+            font-size: 15px;
+            margin-bottom: 18px;
+        }
+
+        .detail-row {
+            display: flex;
+            padding: 12px 0;
+            border-bottom: 1px solid #eef1f4;
+        }
+
+            .detail-row dt {
+                width: 160px;
+                font-weight: bold;
+                color: #0f172a;
+                font-size: 14px;
+            }
+
+            .detail-row dd {
+                font-size: 14px;
+                color: #333;
+            }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 9px 16px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+            .btn-danger:hover {
+                background: #b91c1c;
+            }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #333;
+        }
+
+            .btn-secondary:hover {
+                background: #cbd5e1;
+            }
+    </style>
+}
+
+<div class="page-card">
+    <p class="warning-text">Are you sure you want to delete this department? This cannot be undone.</p>
+
+    <dl>
+        <div class="detail-row">
+        <dt>@Html.DisplayNameFor(m => m.Name)</dt>
+        <dd>@Model.Name</dd>
+</div>
+<div class="detail-row">
+    <dt>@Html.DisplayNameFor(m => m.Code)</dt>
+    <dd>@Model.Code</dd>
+</div>
+<div class="detail-row">
+    <dt>@Html.DisplayNameFor(m => m.IsActive)</dt>
+    <dd>
+        @if (Model.IsActive)
+        {
+            <span class="badge badge-active">Active</span>
+        }
+        else
+        {
+            <span class="badge badge-inactive">Inactive</span>
+        }
+    </dd>
+</div>
+    </dl>
+
+@using (Html.BeginForm("Delete", "Department", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="@Url.Action("Index")" class="btn btn-secondary">Cancel</a>
+    </div>
+}
+</div>

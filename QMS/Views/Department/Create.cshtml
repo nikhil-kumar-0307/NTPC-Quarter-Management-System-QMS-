@@ -1,0 +1,129 @@
+﻿@model QMS.Models.DTOs.DepartmentDto
+
+@{
+    ViewBag.Title = "Create Department";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+    <style>
+        .page-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            padding: 25px;
+            max-width: 500px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+            .form-group label {
+                display: block;
+                font-size: 14px;
+                font-weight: bold;
+                color: #0f172a;
+                margin-bottom: 6px;
+            }
+
+            .form-group input[type="text"] {
+                width: 100%;
+                padding: 10px 12px;
+                border: 1px solid #cbd5e1;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+
+                .form-group input[type="text"]:focus {
+                    outline: none;
+                    border-color: #0f172a;
+                }
+
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+            .checkbox-row input {
+                margin-right: 8px;
+            }
+
+        .text-danger {
+            color: #dc2626;
+            font-size: 13px;
+        }
+
+        .validation-summary-errors ul {
+            list-style: none;
+            color: #dc2626;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 9px 16px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #0f172a;
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background: #1e293b;
+            }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #333;
+        }
+
+            .btn-secondary:hover {
+                background: #cbd5e1;
+            }
+    </style>
+}
+
+<div class="page-card">
+    @using (Html.BeginForm("Create", "Department", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "validation-summary-errors" })
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Name)
+            @Html.TextBoxFor(m => m.Name)
+            @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Code)
+            @Html.TextBoxFor(m => m.Code)
+            @Html.ValidationMessageFor(m => m.Code, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="checkbox-row">
+            @Html.CheckBoxFor(m => m.IsActive)
+            @Html.LabelFor(m => m.IsActive, new { style = "margin:0" })
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="@Url.Action("Index")" class="btn btn-secondary">Cancel</a>
+        </div>
+    }
+</div>

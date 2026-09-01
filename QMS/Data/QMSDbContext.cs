@@ -15,5 +15,6 @@ namespace QMS.Data
         public DbSet <User> Users { get; set; }        
         public DbSet<Agency> Agencies { get; set; }
         public DbSet<EmployeeMaster> EmployeeMasters { get; set; }
+        public DbSet<Department> Departments { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using QMS.Data;
 using QMS.Data.Models;
+using QMS.Models;
 using QMS.Models.DTOs;
 using System;
 using System.IO;
@@ -70,6 +71,7 @@ namespace QMS.Controllers
                 QuarterNo = model.QuarterNo,
                 QuarterType = model.QuarterType,
                 Status = model.Status,
+                Password = model.Password,
                 CreatedAt = DateTime.Now
             };
 
@@ -114,7 +116,8 @@ namespace QMS.Controllers
                 ExistingPhotoPath = employee.PhotoPath,
                 QuarterNo = employee.QuarterNo,
                 QuarterType = employee.QuarterType,
-                Status = employee.Status
+                Status = employee.Status,
+                Password = employee.Password
             };
 
             PopulateDropdowns();
@@ -153,6 +156,7 @@ namespace QMS.Controllers
             employee.QuarterNo = model.QuarterNo;
             employee.QuarterType = model.QuarterType;
             employee.Status = model.Status;
+            employee.Password = model.Password;
 
             if (model.Photo != null && model.Photo.ContentLength > 0)
             {
@@ -222,6 +226,15 @@ namespace QMS.Controllers
             ViewBag.StatusOptions = new SelectList(StatusOptions);
             ViewBag.BloodGroups = new SelectList(BloodGroups);
             ViewBag.LevelOptions = new SelectList(LevelOptions);
+
+            // Only show active departments, alphabetically, sourced from the Departments table
+            var departmentNames = _db.Departments
+                .Where(d => d.IsActive)
+                .OrderBy(d => d.Name)
+                .Select(d => d.Name)
+                .ToList();
+
+            ViewBag.Departments = new SelectList(departmentNames);
         }
 
         // GET: EmployeeMaster/ImportExcel
@@ -276,11 +289,16 @@ namespace QMS.Controllers
                     }
 
                     // Expected column order in row 1 (header row, ignored):
-                    // 1 EmployeeName | 2 EmployeeNo | 3 Department | 4 Designation | 5 EmailId
-                    // 6 MobileNo | 7 IntercomResidence | 8 IntercomOffice | 9 DateOfBirth
-                    // 10 BloodGroup | 11 QuarterNo | 12 QuarterType | 13 Status
+                    // 1 EmployeeName | 2 EmployeeNo | 3 Department | 4 Designation | 5 Level | 6 EmailId
+                    // 7 MobileNo | 8 IntercomResidence | 9 IntercomOffice | 10 DateOfBirth
+                    // 11 BloodGroup | 12 QuarterNo | 13 QuarterType | 14 Status | 15 Password
 
                     var seenInFile = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+                    // Valid department names, so imported rows can be checked the same way as the form
+                    var validDepartments = new HashSet<string>(
+                        _db.Departments.Where(d => d.IsActive).Select(d => d.Name),
+                        StringComparer.OrdinalIgnoreCase);
 
                     for (int row = 2; row <= rowCount; row++)
                     {
@@ -305,15 +323,19 @@ namespace QMS.Controllers
                             string quarterNo = worksheet.Cells[row, 12].Text.Trim();
                             string quarterType = worksheet.Cells[row, 13].Text.Trim();
                             string status = worksheet.Cells[row, 14].Text.Trim();
+                            string password = worksheet.Cells[row, 15].Text.Trim();
 
                             if (string.IsNullOrWhiteSpace(employeeName)) throw new Exception("Employee Name is required.");
                             if (string.IsNullOrWhiteSpace(employeeNo)) throw new Exception("Employee No is required.");
                             if (string.IsNullOrWhiteSpace(department)) throw new Exception("Department is required.");
+                            if (!validDepartments.Contains(department))
+                                throw new Exception($"Invalid Department '{department}'. It must match an active department name exactly.");
                             if (string.IsNullOrWhiteSpace(designation)) throw new Exception("Designation is required.");
                             if (string.IsNullOrWhiteSpace(level)) throw new Exception("Level is required.");
                             if (string.IsNullOrWhiteSpace(quarterNo)) throw new Exception("Quarter No is required.");
                             if (string.IsNullOrWhiteSpace(quarterType)) throw new Exception("Quarter Type is required.");
                             if (string.IsNullOrWhiteSpace(status)) throw new Exception("Status is required.");
+                            if (string.IsNullOrWhiteSpace(password)) throw new Exception("Password is required.");
 
                             // Read the date directly from the cell instead of a culture-formatted string
                             DateTime dob = ParseExcelDate(worksheet.Cells[row, 10]);
@@ -348,6 +370,7 @@ namespace QMS.Controllers
                                 existing.QuarterNo = quarterNo;
                                 existing.QuarterType = quarterType;
                                 existing.Status = status;
+                                existing.Password = password;
 
                                 result.Updated++;
                             }
@@ -370,6 +393,7 @@ namespace QMS.Controllers
                                     QuarterNo = quarterNo,
                                     QuarterType = quarterType,
                                     Status = status,
+                                    Password = password,
                                     CreatedAt = DateTime.Now
                                 });
 
@@ -390,7 +414,7 @@ namespace QMS.Controllers
             return View("ImportResult", result);
         }
 
-       
+
         private DateTime ParseExcelDate(ExcelRange cell)
         {
             if (cell.Value is DateTime dt)
@@ -428,11 +452,11 @@ namespace QMS.Controllers
             {
                 var sheet = package.Workbook.Worksheets.Add("Employees");
                 string[] headers =
-                {
-                    "EmployeeName", "EmployeeNo", "Department", "Designation", "Level", "EmailId",
-                    "MobileNo", "IntercomResidence", "IntercomOffice", "DateOfBirth",
-                    "BloodGroup", "QuarterNo", "QuarterType", "Status"
-                };
+{
+    "EmployeeName", "EmployeeNo", "Department", "Designation", "Level", "EmailId",
+    "MobileNo", "IntercomResidence", "IntercomOffice", "DateOfBirth",
+    "BloodGroup", "QuarterNo", "QuarterType", "Status", "Password"
+};
 
                 for (int i = 0; i < headers.Length; i++)
                     sheet.Cells[1, i + 1].Value = headers[i];
@@ -451,6 +475,7 @@ namespace QMS.Controllers
                 sheet.Cells[2, 12].Value = "12";
                 sheet.Cells[2, 13].Value = "A";
                 sheet.Cells[2, 14].Value = "Active";
+                sheet.Cells[2, 15].Value = "pass1234";
 
                 sheet.Cells.AutoFitColumns();
 

@@ -79,6 +79,11 @@
                         @Html.DropDownListFor(m => m.BloodGroup, (SelectList)ViewBag.BloodGroups, "Select blood group", new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.BloodGroup, "", new { @class = "validation-error" })
                     </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Password)
+                        @Html.TextBoxFor(m => m.Password, new { @class = "form-control", placeholder = "Login password", type = "text", autocomplete = "off" })
+                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "validation-error" })
+                    </div>
                 </div>
             </div>
 
@@ -140,7 +145,7 @@
                         @Html.LabelFor(m => m.Status)
                         @Html.DropDownListFor(m => m.Status, (SelectList)ViewBag.StatusOptions, "Select status", new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.Status, "", new { @class = "validation-error" })
-                    </div>
+                    </div>                    
                 </div>
             </div>
 

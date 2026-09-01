@@ -72,5 +72,11 @@ namespace QMS.Models.DTOs
 
         [Required(ErrorMessage = "Status is required")]
         public string Status { get; set; }
+
+        [Required(ErrorMessage = "Password is required")]
+        [StringLength(50, MinimumLength = 4, ErrorMessage = "Password must be 4-50 characters")]
+        [DataType(DataType.Password)]
+        [Display(Name = "Password")]
+        public string Password { get; set; }
     }
 }

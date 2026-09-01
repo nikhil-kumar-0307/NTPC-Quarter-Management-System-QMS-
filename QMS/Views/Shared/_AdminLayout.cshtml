@@ -129,6 +129,7 @@
             <ul>
                 <li><a href="@Url.Action("AdminDashboard", "Dashboard")" class="@(ViewBag.ActiveMenu == "Dashboard" ? "active" : "")">Dashboard</a></li>
                 <li><a href="@Url.Action("Index", "EmployeeMaster")" class="@(ViewBag.ActiveMenu == "EmployeeMaster" || ViewBag.ActiveMenu == "EmployeeMasterCreate" || ViewBag.ActiveMenu == "EmployeeMasterImport" ? "active" : "")">Employee Master</a></li>
+                <li><a href="@Url.Action("Index", "Department")" class="@(ViewBag.ActiveMenu == "Department" ? "active" : "")">Departments</a></li>
                 <li><a href="@Url.Action("Index", "Agency")" class="@(ViewBag.ActiveMenu == "Agencies" ? "active" : "")">Agencies</a></li>
                 <li><a href="@Url.Action("Login", "Account")">Logout</a></li>
             </ul>
