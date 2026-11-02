@@ -19,10 +19,7 @@ namespace QMS.Controllers
         private static readonly string[] QuarterTypes = { "A", "B", "C" };
         private static readonly string[] StatusOptions = { "Active", "Empty", "Retained", "Agency" };
         private static readonly string[] BloodGroups = { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
-        private static readonly string[] LevelOptions =
-    Enumerable.Range(1, 10).Select(i => "W" + i)
-        .Concat(Enumerable.Range(1, 10).Select(i => "E" + i))
-        .ToArray();
+        
 
         // GET: EmployeeMaster
         public ActionResult Index()
@@ -225,7 +222,6 @@ namespace QMS.Controllers
             ViewBag.QuarterTypes = new SelectList(QuarterTypes);
             ViewBag.StatusOptions = new SelectList(StatusOptions);
             ViewBag.BloodGroups = new SelectList(BloodGroups);
-            ViewBag.LevelOptions = new SelectList(LevelOptions);
 
             // Only show active departments, alphabetically, sourced from the Departments table
             var departmentNames = _db.Departments
@@ -235,6 +231,15 @@ namespace QMS.Controllers
                 .ToList();
 
             ViewBag.Departments = new SelectList(departmentNames);
+
+            // Only show active levels, alphabetically, sourced from the Levels table
+            var levelNames = _db.Levels
+                .Where(l => l.IsActive)
+                .OrderBy(l => l.Name)
+                .Select(l => l.Name)
+                .ToList();
+
+            ViewBag.Levels = new SelectList(levelNames);
         }
 
         // GET: EmployeeMaster/ImportExcel
@@ -300,6 +305,11 @@ namespace QMS.Controllers
                         _db.Departments.Where(d => d.IsActive).Select(d => d.Name),
                         StringComparer.OrdinalIgnoreCase);
 
+                    // Valid level names, so imported rows can be checked the same way as the form
+                    var validLevels = new HashSet<string>(
+                        _db.Levels.Where(l => l.IsActive).Select(l => l.Name),
+                        StringComparer.OrdinalIgnoreCase);
+
                     for (int row = 2; row <= rowCount; row++)
                     {
                         string employeeName = worksheet.Cells[row, 1].Text.Trim();
@@ -340,8 +350,8 @@ namespace QMS.Controllers
                             // Read the date directly from the cell instead of a culture-formatted string
                             DateTime dob = ParseExcelDate(worksheet.Cells[row, 10]);
 
-                            if (!LevelOptions.Contains(level, StringComparer.OrdinalIgnoreCase))
-                                throw new Exception($"Invalid Level '{level}'. Allowed: {string.Join(", ", LevelOptions)}.");
+                            if (!validLevels.Contains(level))
+                                throw new Exception($"Invalid Level '{level}'. It must match an active level name exactly.");
 
                             if (!QuarterTypes.Contains(quarterType, StringComparer.OrdinalIgnoreCase))
                                 throw new Exception($"Invalid Quarter Type '{quarterType}'. Allowed: {string.Join(", ", QuarterTypes)}.");

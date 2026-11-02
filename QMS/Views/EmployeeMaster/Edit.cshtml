@@ -60,7 +60,8 @@
 
                     <div class="form-group">
                         @Html.LabelFor(m => m.Level)
-                        @Html.DropDownListFor(m => m.Level, (SelectList)ViewBag.LevelOptions, "Select level", new { @class = "form-control" })
+                        @Html.DropDownListFor(m => m.Level, (SelectList)ViewBag.Levels, "Select level", new { @class = "form-control" })
+
                         @Html.ValidationMessageFor(m => m.Level, "", new { @class = "validation-error" })
                     </div>
 
