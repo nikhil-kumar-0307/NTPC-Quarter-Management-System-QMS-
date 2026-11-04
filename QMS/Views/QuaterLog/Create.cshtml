@@ -1,0 +1,36 @@
+﻿@model QMS.Models.DTOs.QuaterLogDto
+
+@{
+    ViewBag.Title = "Add Quarter Log";
+    ViewBag.ActiveMenu = "QuaterLog";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-header">
+    <a href="@Url.Action("Index", "QuaterLog")" class="back-link">&larr; Back to Quarter Log</a>
+    <h2>Add Quarter Log</h2>
+    <p>Record a quarter assignment.</p>
+</div>
+
+@using (Html.BeginForm("Create", "QuaterLog", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "validation-summary" })
+
+    <div class="form-section">
+        @Html.Partial("_QuaterLogForm", Model)
+
+        <div class="form-actions">
+            <a href="@Url.Action("Index", "QuaterLog")" class="btn-secondary">Cancel</a>
+            <button type="submit" class="btn-primary">Save Log</button>
+        </div>
+    </div>
+}
+
+@section Styles {
+    <link href="~/Content/quater.css" rel="stylesheet" />
+}
+
+@section Scripts {
+    @Html.Partial("_QuaterLogScripts")
+}

@@ -1,0 +1,35 @@
+﻿@model QMS.Models.DTOs.QuaterLogDto
+
+<div class="form-grid">
+    <div class="form-group">
+        @Html.LabelFor(m => m.QuaterType)
+        @Html.DropDownListFor(m => m.QuaterType, (SelectList)ViewBag.QuarterTypes, "Select type", new { @class = "form-control", id = "QuaterType" })
+        @Html.ValidationMessageFor(m => m.QuaterType, "", new { @class = "validation-error" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.QuaterNo)
+        @Html.DropDownListFor(m => m.QuaterNo, (SelectList)ViewBag.QuaterNumbers, "Select number", new { @class = "form-control id-field", id = "QuaterNo" })
+        @Html.ValidationMessageFor(m => m.QuaterNo, "", new { @class = "validation-error" })
+        <small class="hint hint-warn" id="quaterNoHint" style="display:none;"></small>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.AssignedTo)
+        @Html.DropDownListFor(m => m.AssignedTo, (SelectList)ViewBag.Employees, "Select employee", new { @class = "form-control", id = "AssignedTo" })
+        @Html.ValidationMessageFor(m => m.AssignedTo, "", new { @class = "validation-error" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.AssignedDate)
+        @Html.TextBoxFor(m => m.AssignedDate, "{0:yyyy-MM-dd}", new { type = "date", @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.AssignedDate, "", new { @class = "validation-error" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.RetainedDate)
+        @Html.TextBoxFor(m => m.RetainedDate, "{0:yyyy-MM-dd}", new { type = "date", @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.RetainedDate, "", new { @class = "validation-error" })
+        <small class="hint">Leave empty if the quarter is still assigned.</small>
+    </div>
+</div>

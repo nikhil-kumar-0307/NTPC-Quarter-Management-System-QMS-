@@ -17,5 +17,7 @@ namespace QMS.Data
         public DbSet<EmployeeMaster> EmployeeMasters { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Level> Levels { get; set; }
+        public DbSet<Quater> Quaters { get; set; }
+        public DbSet<QuaterLog> QuaterLogs { get; set; }
     }
 }

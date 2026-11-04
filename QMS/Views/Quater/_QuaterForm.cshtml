@@ -1,0 +1,28 @@
+﻿@model QMS.Models.DTOs.QuaterDto
+
+<div class="form-grid">
+    <div class="form-group">
+        @Html.LabelFor(m => m.QuaterType)
+        @Html.DropDownListFor(m => m.QuaterType, (SelectList)ViewBag.QuarterTypes, "Select type", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.QuaterType, "", new { @class = "validation-error" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.QuaterNumber)
+        @Html.TextBoxFor(m => m.QuaterNumber, new { @class = "form-control id-field", placeholder = "e.g. 204" })
+        @Html.ValidationMessageFor(m => m.QuaterNumber, "", new { @class = "validation-error" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Status)
+        @Html.DropDownListFor(m => m.Status, (SelectList)ViewBag.StatusOptions, "Select status", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Status, "", new { @class = "validation-error" })
+    </div>
+
+    <div class="form-group">
+        <div class="check-row">
+            @Html.CheckBoxFor(m => m.IsActive)
+            @Html.LabelFor(m => m.IsActive)
+        </div>
+    </div>
+</div>

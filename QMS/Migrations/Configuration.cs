@@ -16,16 +16,9 @@
                 u => u.EmployeeNumber,
                 new User
                 {
-                    EmployeeNumber = "EMP001",
+                    EmployeeNumber = "admin",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
                     Role = "Admin",
-                    LastLoginAt = null
-                },
-                new User
-                {
-                    EmployeeNumber = "EMP002",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Staff@123"),
-                    Role = "Staff",
                     LastLoginAt = null
                 }
             );
